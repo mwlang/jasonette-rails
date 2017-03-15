@@ -45,6 +45,11 @@ Ruby scoping, esp. with meta-programming, so watch out (and help out)!
 This gem allows to to write the JSON structure expected by a Jasonette application in a much more powerful
 way than with Jbuilder alone.
 
+There's a demo app published here:  https://github.com/mwlang/jasonette-rails-demo/tree/gemified
+
+The master branch has the traditional Jbuilder approach throughout.  The gemified branch is built using the 
+extensions of this gem.
+
 For example:
 
 Here's how the "hello.json" demo JSON would be rendered with this gem:
