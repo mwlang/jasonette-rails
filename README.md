@@ -147,6 +147,78 @@ json.jason do
 end
 ```
 
+The goal is to make things a lot easier to build than with Jbuilder alone.   For example, above, it's much
+easier to build the sections, items, and components without having to deal with child!, array!, or partials
+with collections.  Which also makes it a lot easier to build arrays of heterogeneous components.
+
+Building your data is a snap, too.  For example:
+
+```ruby
+json.jason do
+  head do
+    title "Beatles"
+    data.names ["John", "George", "Paul", "Ringo"]
+    data.songs [
+        {album: "My Bonnie", song: "My Bonnie"},
+        {album: "My Bonnie", song: "Skinny Minnie"},
+        {album: "Please Please Me", song: "I Saw Her Standing There"},
+      ]
+  end
+end
+```
+
+Some things get a lot less verbose
+
+style blocks using hashes:
+
+```ruby
+json.jason do
+  head do
+    title "Foobar"
+    style "styled_row", font: "HelveticaNeue", size: 20, color: "#FFFFFF", padding: 10
+    style "col", font: "RobotoBold", color: "#FF0055"
+  end
+end
+```
+Produces:
+
+```ruby
+{
+  "$jason": {
+    "head": {
+      {
+        "title": "Foobar",
+        "styles": {
+          "styled_row": {
+            "font": "HelveticaNeue",
+            "size": "20",
+            "color": "#FFFFFF",
+            "padding": "10",
+          },
+          "col": {
+            "font": "RobotoBold",
+            "color": "#FF0055",
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+You can even do the bare minimum head block like this:
+
+```ruby
+json.jason do
+  head.title "Simple!"
+  body do
+    # Your Brilliant App
+  end
+end
+```
+
+...more to come!...
+
 ## Installation
 Add this line to your application's Gemfile:
 
@@ -164,6 +236,7 @@ Or install it yourself as:
 $ gem install jasonette
 ```
 
+Then start using.  Basically, start with "json.jason" to get your opening $jason block and
 ## Contributing
 
 # How to contribute to Jasonette Rails
