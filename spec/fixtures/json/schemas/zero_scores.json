@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "required": ["type", "options"],
+  "properties": {
+    "type": { "type": "string" },
+    "options": {
+      "type": "object",
+      "required": ["match"],
+      "properties": {
+        "match": {
+          "type": "object",
+          "required": ["current_set", "max_sets", "home", "away"],
+          "properties": {
+            "current_set": {"type": "string"},
+            "max_sets": {"type": "string"},
+            "home": { "type": "array" },
+            "away": { "type": "array" }
+          }
+        }
+      }
+    }
+  }
+}
