@@ -10,6 +10,9 @@ Note: Almost nothing about this gem is documented, however, you can find ample e
 spec/lib/jasonette/... folders.  Generally speaking, the DSL follows the $jason structure closely and supporting
 classes are organized in sub-folders of the project's lib/jasonette/... accordingly.
 
+Since it is hooked into Jbuilder, you're able to mix and match Jbuilder directives alongside the extensions provided
+through this gem.  But it's challenging at the moment to "get it right" so everything stays in hierarchical context.
+
 ### Here lies trouble!
 
 * There is limited support for breaking apart giant jbuilder templates into smaller partials.  Right now, there's
@@ -34,6 +37,10 @@ just two "hooks" into the Jbuilder library and that's "json.jason" and "json.bod
 * add Linting?
 
 ## Usage
+
+If I haven't done enough to scare you away, then check out the code and play around and provide feedback!  
+Some of the techniques I used are stretching the limits of my understanding of Rails rendering engine and
+Ruby scoping, esp. with meta-programming, so watch out (and help out)!
 
 This gem allows to to write the JSON structure expected by a Jasonette application in a much more powerful
 way than with Jbuilder alone.
@@ -139,9 +146,6 @@ json.jason do
   end
 end
 ```
-
-Since it is hooked into Jbuilder, you're able to mix and match Jbuilder directives alongside the extensions provided
-through this gem.  
 
 ## Installation
 Add this line to your application's Gemfile:
