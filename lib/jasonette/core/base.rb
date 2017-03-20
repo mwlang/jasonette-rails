@@ -115,9 +115,11 @@ module Jasonette
     end
 
     def inline! name, *args
-      with_attributes do
+      j = JbuilderTemplate.new(context) do |json|
         json.partial! name, *args
       end
+      @attributes.merge! j.attributes!
+      self
     end
 
     def attributes!
