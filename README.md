@@ -1,5 +1,6 @@
 # Jasonette Rails
-A extension of the Jbuilder framework to facilitate building Jasonette flavored JSON in Rails
+A extension of the Jbuilder framework to facilitate building [Jasonette](https://github.com/Jasonette/JASONETTE-iOS)
+flavored JSON in Rails.
 
 ## ALPHA code!
 
@@ -47,7 +48,7 @@ way than with Jbuilder alone.
 
 There's a demo app published here:  https://github.com/mwlang/jasonette-rails-demo/tree/gemified
 
-The master branch has the traditional Jbuilder approach throughout.  The gemified branch is built using the 
+The master branch has the traditional Jbuilder approach throughout.  The gemified branch is built using the
 extensions of this gem.
 
 For example:

@@ -1,6 +1,9 @@
 require 'rails/railtie'
 require 'jbuilder/jbuilder_template'
 
+module Jasonette
+end
+
 # Core components for library
 require_relative 'jasonette/core/properties'
 require_relative 'jasonette/core/base'
@@ -19,6 +22,3 @@ require_relative 'jasonette/jason/body/header/search'
 
 # Inject Jasonette into Jbuilder
 require_relative 'jasonette/jbuilder_extensions'
-
-module Jasonette
-end

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jasonette-rails (0.1.1)
+    jasonette-rails (0.1.2)
       actionview (>= 4.0.0)
       jbuilder (~> 2.6.1)
       rails (>= 4.0.0)
@@ -99,7 +99,7 @@ GEM
     multi_json (1.12.1)
     nenv (0.3.0)
     nio4r (2.0.0)
-    nokogiri (1.7.0.1)
+    nokogiri (1.7.1)
       mini_portile2 (~> 2.1.0)
     notiffany (0.1.1)
       nenv (~> 0.1)
@@ -190,4 +190,4 @@ DEPENDENCIES
   rspec-its (~> 1.2.0)
 
 BUNDLED WITH
-   1.14.2
+   1.14.5
