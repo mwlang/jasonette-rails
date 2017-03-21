@@ -25,7 +25,10 @@ Gem::Specification.new do |s|
   s.add_development_dependency "guard-rspec"
 
   s.add_development_dependency "rspec", "~> 3.5.0"
+  s.add_development_dependency "rspec-rails"
   s.add_development_dependency "rspec-its", "~> 1.2.0"
   s.add_development_dependency "pry-byebug", "~> 3.4.0"
   s.add_development_dependency "json_matchers", "~> 0.7.0"
+  s.add_development_dependency "sqlite3"
+  s.add_development_dependency "jbuilder", "~> 2.6.1"
 end

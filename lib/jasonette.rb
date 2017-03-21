@@ -2,6 +2,9 @@ require 'rails/railtie'
 require 'jbuilder/jbuilder_template'
 
 module Jasonette
+  if Object.const_defined? "Rails::Engine"
+    require_relative 'jasonette/engine'
+  end
 end
 
 # Core components for library
