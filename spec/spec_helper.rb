@@ -6,6 +6,7 @@ require "active_support"
 require 'action_controller'
 require 'action_controller/base'
 
+require 'rails/all'
 require 'jbuilder'
 
 require_relative '../lib/jasonette'
