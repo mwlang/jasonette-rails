@@ -4,7 +4,8 @@ flavored JSON in Rails.
 
 ## ALPHA code!
 
-Warning:  This project is **alpha** code and still in highly experimental stage and subjected to
+Warning:  Work in progress. Proceed with caution. Testers and contributions are welcome.
+This project is **alpha** code and still in highly experimental stage and subjected to
 drastic changes to the DSL.  It is also quite full of bugs despite the unit tests you may find herein!
 
 Note: Almost nothing about this gem is documented, however, you can find ample examples in the project's
