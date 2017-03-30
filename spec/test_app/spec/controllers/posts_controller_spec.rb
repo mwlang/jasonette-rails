@@ -10,7 +10,7 @@ describe PostsController do
       expect(ActionView::Template::Handlers.extensions).to eq [:raw, :erb, :html, :builder, :ruby, :jbuilder]
       request.accept = "application/json"
       get :index, format: :json
-      expect(response.body).to eq "foo"
+      expect(response.body).to include "foo", "bar"
     end
   end
 end
