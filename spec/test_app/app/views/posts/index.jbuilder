@@ -2,8 +2,7 @@ json.jason do
   body do
     sections do
       items do
-        label "foo"
-        label "bar"
+        @post.each{|p| label p.title }
       end
     end
   end
