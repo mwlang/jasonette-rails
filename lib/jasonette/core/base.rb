@@ -8,7 +8,7 @@ module Jasonette
         if properties.include? name
           property_set! name, *args, &block
         else
-          json.set!(name) { instance_eval(&block) }
+          json.set!(name) { block.call }
         end
       end
     end
@@ -41,7 +41,11 @@ module Jasonette
     def initialize context
       @context = context
       @attributes = {}
-      instance_eval(&::Proc.new) if ::Kernel.block_given?
+
+      @context.extend JasonSingletonMethod
+      @context.define(self)
+      yield if ::Kernel.block_given?
+      self
     end
 
     def trigger name, &block
@@ -82,7 +86,7 @@ module Jasonette
     end
 
     def encode
-      instance_eval(&::Proc.new)
+      yield
       self
     end
 
@@ -96,13 +100,13 @@ module Jasonette
     alias :css_class :klass
 
     def with_attributes
-      if json
-        instance_eval(&::Proc.new)
+      if json.present?
+        yield
         return self
       end
       template = JbuilderTemplate.new(context) do |json|
         @json = json
-        instance_eval(&::Proc.new)
+        yield
         @json = nil
       end
       @attributes.merge! template.attributes!
@@ -123,6 +127,19 @@ module Jasonette
     def attributes!
       merge_properties
       @attributes
+    end
+  end
+end
+
+module JasonSingletonMethod
+  def define(meta)
+    @meta = meta
+  end
+  def method_missing(symbol, *args, &block)
+    if @meta.respond_to?(symbol)
+      @meta.send(symbol, *args, &block)
+    else
+      @meta.send(:method_missing, symbol, *args, &block)
     end
   end
 end
