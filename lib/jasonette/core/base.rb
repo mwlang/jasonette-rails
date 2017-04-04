@@ -8,7 +8,7 @@ module Jasonette
         if properties.include? name
           property_set! name, *args, &block
         else
-          json.set!(name) { block.call }
+          json.set!(name) { instance_eval(&block) }
         end
       end
     end
@@ -42,10 +42,8 @@ module Jasonette
       @context = context
       @attributes = {}
 
-      @context.extend JasonSingletonMethod
-      @context.define(self)
-      yield if ::Kernel.block_given?
-      self
+      self.extend ContexEmbedder if @context.present?
+      instance_eval(&::Proc.new) if ::Kernel.block_given?
     end
 
     def trigger name, &block
@@ -86,7 +84,7 @@ module Jasonette
     end
 
     def encode
-      yield
+      instance_eval(&::Proc.new)
       self
     end
 
@@ -100,13 +98,13 @@ module Jasonette
     alias :css_class :klass
 
     def with_attributes
-      if json.present?
-        yield
+      if json
+        instance_eval(&::Proc.new)
         return self
       end
       template = JbuilderTemplate.new(context) do |json|
         @json = json
-        yield
+        instance_eval(&::Proc.new)
         @json = nil
       end
       @attributes.merge! template.attributes!
@@ -129,17 +127,14 @@ module Jasonette
       @attributes
     end
   end
-end
 
-module JasonSingletonMethod
-  def define(meta)
-    @meta = meta
-  end
-  def method_missing(symbol, *args, &block)
-    if @meta.respond_to?(symbol)
-      @meta.send(symbol, *args, &block)
-    else
-      @meta.send(:method_missing, symbol, *args, &block)
+  module ContexEmbedder
+    def self.extended(klass_obj)
+      context = klass_obj.context
+      context.instance_variables.each do |var|
+        raise "Jason is using #{var} instance variable. Please change variable name." if klass_obj.instance_variable_get(var)
+        klass_obj.instance_variable_set var, context.instance_variable_get(var)
+      end
     end
   end
 end

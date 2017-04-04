@@ -14,7 +14,7 @@ describe PostsController do
     it "render a list of posts" do
       request.accept = "application/json"
       get :index, format: :json
-      expect(response.body).to include "Foo", "Bar"
+      expect(JSON.parse(response.body)).to eq({"$jason"=>{"body"=>{"sections"=>[{"items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]}]}}})
     end
   end
 end
