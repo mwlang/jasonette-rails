@@ -41,6 +41,8 @@ module Jasonette
     def initialize context
       @context = context
       @attributes = {}
+
+      self.extend ContexEmbedder if @context.present?
       instance_eval(&::Proc.new) if ::Kernel.block_given?
     end
 
@@ -123,6 +125,16 @@ module Jasonette
     def attributes!
       merge_properties
       @attributes
+    end
+  end
+
+  module ContexEmbedder
+    def self.extended(klass_obj)
+      context = klass_obj.context
+      context.instance_variables.each do |var|
+        raise "Jason is using #{var} instance variable. Please change variable name." if klass_obj.instance_variable_get(var)
+        klass_obj.instance_variable_set var, context.instance_variable_get(var)
+      end
     end
   end
 end
