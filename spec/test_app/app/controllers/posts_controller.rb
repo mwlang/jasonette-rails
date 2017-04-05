@@ -1,9 +1,15 @@
 class PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
+  before_action :set_posts, only: [:index, :partial, :inline]
 
   # GET /posts
   def index
-    @posts = Post.all
+  end
+
+  def partial
+  end
+
+  def inline
   end
 
   # GET /posts/1
@@ -46,6 +52,10 @@ class PostsController < ApplicationController
   end
 
   private
+    def set_posts
+      @posts = Post.all
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_post
       @post = Post.find(params[:id])
