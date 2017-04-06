@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "required": ["$jason"],
+  "properties": {
+    "$jason": {
+      "type": "object",
+      "required": ["head"],
+      "properties": {
+        "head": {
+          "type": "object",
+          "required": ["title", "data"],
+          "properties": {
+            "title": { "type": "string" },
+            "data": {
+              "type": "object",
+              "required": ["names", "songs"],
+              "properties": {
+                "names": { "type": "array" },
+                "songs": {
+                  "type": "array",
+                  "required": ["album", "song"],
+                  "properties": {
+                    "album": { "type": "string" },
+                    "song": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
