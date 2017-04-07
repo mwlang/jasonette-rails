@@ -4,17 +4,14 @@ module Jasonette
 
     def self.fetch context
       return @@instance if defined?(@@instance) && @@instance
-      puts 'FETCH' * 10
       @@instance = Jasonette::Jason.new(context)
     end
 
     def self.instance
-      puts 'INSTANCE' * 8
       @@instance
     end
 
     def self.reset
-      puts 'RESET' * 10
       @@instance = nil
     end
   end

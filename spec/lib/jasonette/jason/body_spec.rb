@@ -44,4 +44,33 @@ RSpec.describe Jasonette::Jason::Body do
       ]}
     )
   end
+
+  it "builds many sections as an array" do
+    results = builder.encode do
+      sections do
+        type "horizontal"
+        items do
+          label "Foo"
+        end
+      end
+      sections do
+        type "vertical"
+        items do
+          label "Bar"
+        end
+      end
+    end
+    expect(results.attributes!).to eq({
+      "sections" => [
+        { "type" => "horizontal",
+          "items" => [
+            {"type" => "label", "text" => "Foo"}
+        ]},
+        { "type" => "vertical",
+          "items" => [
+            {"type" => "label", "text" => "Bar"}
+        ]}
+      ]}
+    )
+  end
 end
