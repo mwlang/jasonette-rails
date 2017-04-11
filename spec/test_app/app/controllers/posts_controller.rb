@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
-  before_action :set_posts, only: [:index, :partial, :inline]
+  before_action :set_posts, only: [:index, :partial, :inline, :mixing]
 
   # GET /posts
   def index
@@ -10,6 +10,9 @@ class PostsController < ApplicationController
   end
 
   def inline
+  end
+
+  def mixing
   end
 
   # GET /posts/1

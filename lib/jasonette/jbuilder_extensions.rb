@@ -3,7 +3,10 @@ module Jasonette
     private_class_method :new
 
     def self.fetch context
-      return @@instance if defined?(@@instance) && @@instance
+      if (defined?(@@instance) && @@instance)
+        return @@instance if instance.context == context
+        reset
+      end
       @@instance = Jasonette::Jason.new(context)
     end
 
@@ -25,7 +28,6 @@ module Jasonette
       builder = JasonSingleton.fetch(@context)
       builder.with_attributes { instance_eval(&block) }
       _set_value "$jason", builder.attributes!
-      JasonSingleton.reset
       self
     end
 
