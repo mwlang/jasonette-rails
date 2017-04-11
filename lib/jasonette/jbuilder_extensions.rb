@@ -41,85 +41,18 @@ module Jasonette
     #   {name => builder.object_id.to_s}.to_json
     # end
 
-    # # TODO : WORKING WITH BLOCK
-    # def inline! name
-    #   j = JbuilderTemplate.new(@context) do |json|
-    #     json.partial! name
-    #   end
-    #   @attributes.merge! j.attributes!
-    #   self
-    # end
-
     def inline! name
       partial_source = @context.lookup_context.find_file(name, @context.lookup_context.prefixes, true).source
+      json = self
       source = <<-RUBY
         json.jason do
           instance_eval(partial_source)
         end
       RUBY
-      
-      builder = JbuilderTemplate.new(@context) do |json|
-        instance_eval(source)
-      end
-      @attributes.merge! builder.attributes!
+
+      instance_eval(source)
       self
     end
-
-    # # TODO : EFFORT
-    # def inline! name
-    #   # ActionView::Template.new
-    #   # JbuilderTemplate.new(context).render
-    #
-    #   # xx = ::Proc.new do |json|
-    #   #   json.jason do
-    #   #     aa '1212'
-    #   #     #json.partial! partial: "body"#, locals: {json: json}#, *args
-    #   #   end
-    #   # end
-    #   # file = File.open("_body.jbuilder", "rb")
-    #   # contents = file.read
-    #
-    #   # raise "===================>#{x}"
-    #   # Template.find_by_name(tmpl)
-    #
-    #   # j = JbuilderTemplate.new(@context) do |json|
-    #   #   json.jason do
-    #   #     json.partial! name#, layout: true, layout: "body"
-    #   #     # raise "=======================>#{x}"
-    #   #     # render_to_string "users/profile"#, :layout => false
-    #   #   end
-    #   # end
-    #   # JbuilderTemplate.new(@context) do |json|
-    #   # end
-    #   # file = File.open("#{Rails.root}/app/views/posts/_body.jbuilder", "rb")
-    #   # source = <<-RUBY
-    #   #   json.jason do
-    #   #     instance_eval("#{file.read}")
-    #   #   end
-    #   # RUBY
-    #   # # raise "=================>#{source}"
-    #   # JbuilderTemplate.new(@context) do |json|
-    #   #   instance_eval(source)
-    #   # end
-    #
-    #   # builder = JasonSingleton.fetch(@context)
-    #   # builder.with_attributes { ::Proc.new { source } }
-    #
-    #
-    #
-    #   # raise "=================>#{file.read}"
-    #   # @context.lookup_context.find_file('posts/_body').inspect
-    #   raise "=#{@context.lookup_context.methods}======#{@context.lookup_context.find_file(name, @context.lookup_context.prefixes, true).source}====#{}==============="
-    #   # template = ActionView::Template.new(source, nil, JbuilderHandler, virtual_path: nil)
-    #   # json = template.render('body', {}).strip
-    #   # p "=============>#{json}"
-    #
-    #   # builder = JasonSingleton.fetch(template)
-    #   # json = template.source
-    #   # builder.with_attributes { instance_eval() }
-    #   # @attributes.merge! j.attributes!
-    #   self
-    # end
 
     # def head &block
     #   builder = Jasonette::Jason::Head.new(@context)
