@@ -146,5 +146,69 @@ RSpec.describe Jasonette::Items do
         ]
       })
     end
+
+    it "builds an action on lable" do
+      build = build_with(described_class) do
+        label do
+          text "Check out Live DEMO"
+          action do
+            type "$network.request"
+            options do
+              url "https://url/submit"
+              action_method "POST"
+            end
+            success do
+              type "$render"
+            end
+            error do
+              type "$util.banner"
+              options do
+                title "Error"
+                description "Something went wrong."
+              end
+            end
+          end
+        end
+      end
+      expect(build.attributes!).to eq({
+        "items"=>[{
+          "type"=>"label",
+          "text"=>"Check out Live DEMO",
+          "action" => {
+            "type" => "$network.request",
+            "options" => {
+              "url" => "https://url/submit",
+              "method" => "POST"
+            },
+            "success" => { "type" => "$render"  },
+            "error" => {
+              "type" => "$util.banner",
+              "options" => {
+                "title" => "Error",
+                "description" => "Something went wrong."
+              }
+            }
+          }
+        }]
+      })
+    end
+
+    it "builds an action trigger lable" do
+      build = build_with(described_class) do
+        label do
+          text "Check out Live DEMO"
+          action do
+            trigger "refresh_view"
+          end
+        end
+      end
+      expect(build.attributes!).to eq({
+        "items"=>[{
+          "type"=>"label",
+          "text"=>"Check out Live DEMO",
+          "action" => { "trigger" => "refresh_view" }
+        }]
+      })
+    end
   end
 end

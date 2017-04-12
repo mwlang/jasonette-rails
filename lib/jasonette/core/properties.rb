@@ -121,6 +121,7 @@ module Jasonette::Properties
   end
 
   def property_sender target, name, *args, &block
+    raise "unhandled definition! : use different property name then `#{name}`" if Object.new.methods.include?(name.to_sym)
     if block_given?
       target.send name, *args, &block
     elsif args.one? && args.first.is_a?(Hash)

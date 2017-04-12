@@ -102,6 +102,18 @@ module Jasonette
     end
     alias :css_class :klass
 
+    def _method name = nil
+      if block_given?
+        item = self.class.new(@context) do
+          with_attributes { instance_eval(&::Proc.new) }
+        end
+        with_attributes { json.set! 'method', item.attributes! }
+      else
+        with_attributes { json.set! 'method', name }
+      end
+    end
+    alias :action_method :_method
+
     def with_attributes
       if json
         instance_eval(&::Proc.new)

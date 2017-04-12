@@ -140,4 +140,62 @@ RSpec.describe Jasonette::Jason::Head do
       expect(results.attributes!).to eq expected_with_col
     end
   end
+
+  context "unhandle property" do
+    it "raise error if property name is `method`" do
+      expect { builder.encode do
+        action "method" do
+          type "$network.request"
+        end
+      end }.to raise_error "unhandled definition! : use different property name then `method`"
+    end
+  end
+
+  context "actions" do
+    let(:expected) do
+      {
+        "actions" => {
+          "submit_item" => {
+            "type" => "$network.request",
+            "options" => {
+              "url" => "https://url/submit",
+              "method" => "POST"
+            },
+            "success" => { "type" => "$render"  },
+            "error" => {
+              "type" => "$util.banner",
+              "options" => {
+                "title" => "Error",
+                "description" => "Something went wrong."
+              }
+            }
+          }
+        }
+      }
+    end
+
+    it "builds an option with action method" do
+      results = builder.encode do
+        action "submit_item" do
+          type "$network.request"
+          options do
+            url "https://url/submit"
+            action_method "POST"
+          end
+          success do
+            type "$render"
+          end
+          error do
+            type "$util.banner"
+            options do
+              title "Error"
+              description "Something went wrong."
+            end
+          end
+        end
+      end
+
+      expect(results.attributes!).to eq expected
+    end
+  end
 end
