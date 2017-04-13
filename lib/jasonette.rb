@@ -15,10 +15,12 @@ require_relative 'jasonette/core/sections'
 require_relative 'jasonette/core/items'
 require_relative 'jasonette/core/layout'
 require_relative 'jasonette/core/components'
+require_relative 'jasonette/core/options'
 
 # Structural components
 require_relative 'jasonette/jason'
 require_relative 'jasonette/jason/head'
+require_relative 'jasonette/jason/head/actions'
 require_relative 'jasonette/jason/head/templates'
 require_relative 'jasonette/jason/body'
 require_relative 'jasonette/jason/body/header'

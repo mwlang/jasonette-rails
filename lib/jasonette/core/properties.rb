@@ -128,7 +128,12 @@ module Jasonette::Properties
   def property_sender target, name, *args, &block
     raise "unhandled definition! : use different property name then `#{name}`" if Object.new.methods.include?(name.to_sym)
     if block_given?
-      target.send name, *args, &block
+      if target.respond_to?(:target_name)
+        target.target_name = name
+        target.instance_eval &block
+      else
+        target.send name, *args, &block
+      end
     elsif args.one? && args.first.is_a?(Hash)
       target.send name do
         args.first.each{ |key, value| json.set! key, value.to_s }

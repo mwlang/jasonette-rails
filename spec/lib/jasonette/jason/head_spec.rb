@@ -161,7 +161,7 @@ RSpec.describe Jasonette::Jason::Head do
               "url" => "https://url/submit",
               "method" => "POST"
             },
-            "success" => { "type" => "$render"  },
+            "success" => { "type" => "$render" },
             "error" => {
               "type" => "$util.banner",
               "options" => {
