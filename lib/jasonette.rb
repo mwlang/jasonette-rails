@@ -19,9 +19,11 @@ require_relative 'jasonette/core/components'
 # Structural components
 require_relative 'jasonette/jason'
 require_relative 'jasonette/jason/head'
+require_relative 'jasonette/jason/head/templates'
 require_relative 'jasonette/jason/body'
 require_relative 'jasonette/jason/body/header'
 require_relative 'jasonette/jason/body/header/search'
+require_relative 'jasonette/jason/head/templates/body'
 
 # Inject Jasonette into Jbuilder
 require_relative 'jasonette/jbuilder_extensions'

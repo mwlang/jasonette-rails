@@ -1,5 +1,10 @@
 module Jasonette::Properties
   module ClassMethods
+
+    def super_property
+      properties.push(*superclass.properties)
+    end
+
     def property name, is_many = false
       properties.merge! "#{name}".to_sym => { is_many: is_many }
     end
