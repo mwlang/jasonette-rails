@@ -2,7 +2,7 @@ RSpec.describe Jasonette::Jason::Head::Templates do
 
   let(:builder) { build_with(described_class) }
 
-  it "builds a body" do
+  it "builds a body with different name" do
     builder.set_target_name('body_foo')
     results = builder.encode do
       sections do
@@ -13,7 +13,7 @@ RSpec.describe Jasonette::Jason::Head::Templates do
       end
     end
 
-    expect(results.attributes!).to eq ({
+    expect(results).to eqj ({
       "body_foo" => {
         "sections" => [{
           "items" => [{

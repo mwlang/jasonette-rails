@@ -2,15 +2,15 @@ RSpec.describe Jasonette::Jason::Head::Actions do
 
   let(:builder) { build_with(described_class) }
 
-  it "builds a data" do
+  it "builds action with data" do
     results = builder.encode do
       type "$network.request"
       options do
         url "https://url/submit"
         action_method "POST"
         data do
-          id '12'
-          name 'Samule'
+          id "12"
+          name "Samule"
         end
       end
       success do
@@ -18,7 +18,7 @@ RSpec.describe Jasonette::Jason::Head::Actions do
       end
     end
 
-    expect(results.attributes!).to eq ({
+    expect(results).to eqj ({
       "type" => "$network.request",
       "success" => { "type" => "$render" },
       "options" => {

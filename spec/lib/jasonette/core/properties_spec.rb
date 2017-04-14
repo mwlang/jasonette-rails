@@ -76,5 +76,20 @@ RSpec.describe Jasonette::Properties do
     end
   end
 
+  context "#super_property" do
+    class BarBuilder < MockBuilder
+      include Jasonette::Properties
+      property :bar
+    end
+
+    class FooBuilder < BarBuilder
+      super_property
+      property :foo
+    end
+
+    subject { FooBuilder.new }
+
+    its(:properties) { is_expected.to include :bar, :foo }
+  end
 
 end

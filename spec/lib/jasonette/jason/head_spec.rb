@@ -195,7 +195,7 @@ RSpec.describe Jasonette::Jason::Head do
         end
       end
 
-      expect(results.attributes!).to eq expected
+      expect(results).to eqj expected
     end
   end
 end

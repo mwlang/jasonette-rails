@@ -51,39 +51,6 @@ module Jasonette
       instance_eval(&::Proc.new) if ::Kernel.block_given?
     end
 
-    def trigger name, &block
-      with_attributes do
-        json.trigger name
-        instance_eval(&block) if block_given?
-      end
-    end
-
-    def action name="action", &block
-      with_attributes do
-        json.set! name do
-          block_given? ? instance_eval(&block) : success { type "$render" }
-        end
-      end
-    end
-
-    def render!
-      with_attributes { json.type "$render" }
-    end
-
-    def reload!
-      with_attributes { json.type "$reload" }
-    end
-
-    def success &block
-      with_attributes do
-        if block_given?
-          json.success { instance_eval(&block) }
-        else
-          json.success { json.type "$render" }
-        end
-      end
-    end
-
     def target!
       attributes!.to_json
     end
