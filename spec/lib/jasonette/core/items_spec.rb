@@ -233,5 +233,35 @@ RSpec.describe Jasonette::Items do
         }]
       })
     end
+
+    it "builds a simple text" do
+      build = build_with(described_class) do
+        text "Check out Live DEMO"
+      end
+
+      expect(build).to eqj({
+        "items"=>[
+          {
+            "text"=>"Check out Live DEMO",
+            "type"=>"text"
+          }
+        ]
+      })
+    end
+
+    it "builds a simple video" do
+      build = build_with(described_class) do
+        video "file://demo.json"
+      end
+
+      expect(build).to eqj({
+        "items"=>[
+          {
+            "type"=>"video",
+            "file_url"=>"file://demo.json"
+          }
+        ]
+      })
+    end
   end
 end
