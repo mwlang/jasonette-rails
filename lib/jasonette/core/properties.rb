@@ -125,11 +125,31 @@ module Jasonette::Properties
     end
   end
 
+  def set_target_name(name)
+    instance_variable_set(target_name, name)
+  end
+
+  def get_target_name
+    instance_variable_get(target_name)
+  end
+
+  def target_name
+    "@target_name_#{self.object_id}"
+  end
+
+  def target_name?
+    !get_target_name.nil?
+  end
+
+  def property_sender?
+    [Jasonette::Jason::Head::Actions, Jasonette::Jason::Head::Templates].include?(self.class)
+  end
+
   def property_sender target, name, *args, &block
     raise "unhandled definition! : use different property name then `#{name}`" if Object.new.methods.include?(name.to_sym)
     if block_given?
-      if target.respond_to?(:target_name)
-        target.target_name = name
+      if target.property_sender?
+        target.set_target_name name
         target.instance_eval &block
       else
         target.send name, *args, &block
