@@ -7,11 +7,29 @@ RSpec.describe Jasonette::Sections do
     expect(results.attributes).to eqj({"title" => "Foobar"})
   end
 
-  it "#search" do
+  it "#items" do
     results = build_with(described_class) do
       items do
         label "Foo"
         label "Bar"
+      end
+    end
+
+    expect(results.attributes!).to eq({
+      "items"=>[
+        {"text"=>"Foo", "type"=>"label"},
+        {"text"=>"Bar", "type"=>"label"}
+      ]
+    })
+  end
+
+  it "#items iterated" do
+    buttons = ["Foo", "Bar"]
+    results = build_with(described_class) do
+      items do
+        buttons.map do |text|
+          label text
+        end
       end
     end
 
