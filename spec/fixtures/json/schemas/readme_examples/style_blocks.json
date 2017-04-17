@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "required": ["$jason"],
+  "properties": {
+    "$jason": {
+      "type": "object",
+      "required": ["head"],
+      "properties": {
+        "head": {
+          "type": "object",
+          "required": ["title", "styles"],
+          "properties": {
+            "title": { "type": "string" },
+            "styles": {
+              "type": "object",
+              "required": ["styled_row", "col"],
+              "properties": {
+                "styled_row": {
+                  "type": "object",
+                  "required": ["font", "size", "color", "padding"],
+                  "properties": {
+                    "font": { "type": "string" },
+                    "size": { "type": "string" },
+                    "color": { "type": "string" },
+                    "padding": { "type": "string" }
+                  }
+                },
+                "col": {
+                  "type": "object",
+                  "required": ["font", "color"],
+                  "properties": {
+                    "font": { "type": "string" },
+                    "color": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

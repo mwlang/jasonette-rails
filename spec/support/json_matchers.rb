@@ -4,8 +4,7 @@ require "json_matchers/rspec"
 RSpec::Matchers.define :match_response_schema do |schema|
   match do |builder|
     schema_path = File.join("./spec/fixtures/json/schemas", "#{schema}.json")
-    schema = File.read schema_path
-    JSON::Validator.validate!(schema, builder.to_json, strict: true)
+    JSON::Validator.validate!(schema_path, builder.to_json, strict: true)
   end
 end
 
