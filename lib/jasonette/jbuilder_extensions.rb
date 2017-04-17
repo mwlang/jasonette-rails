@@ -4,7 +4,7 @@ module Jasonette
 
     def self.fetch context
       if (defined?(@@instance) && @@instance)
-        return @@instance if instance.context == context
+        return @@instance if !context.nil? && (instance.context == context)
         reset
       end
       @@instance = Jasonette::Jason.new(context)
