@@ -2,7 +2,7 @@ module Jasonette::Properties
   module ClassMethods
 
     def super_property
-      properties.push(*superclass.properties)
+      properties.merge!(superclass.properties)
     end
 
     def property name, is_many = false
