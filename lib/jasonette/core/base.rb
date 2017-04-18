@@ -116,6 +116,10 @@ module Jasonette
       self
     end
 
+    def partial! name, *args
+      with_attributes { json.partial! name, *args }
+    end
+
     def inline! name, *args
       j = JbuilderTemplate.new(context) do |json|
         json.partial! name, *args

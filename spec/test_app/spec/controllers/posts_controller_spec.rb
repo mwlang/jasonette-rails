@@ -20,21 +20,21 @@ describe PostsController do
     it "render a list of posts" do
       request.accept = "application/json"
       get :partial, format: :json
-      expect(JSON.parse(response.body)).to eq({"$jason"=>{"body"=>{"sections"=>[{"type"=>"partial", "items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]}]}}, "foo"=>"bar"})
+      expect(JSON.parse(response.body)).to eq({"$jason"=>{"body"=>{"sections"=>[{"type"=>"partial", "items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]}]}, "foo"=>"bar"}})
     end
 
     let(:action_partial_json) do
-      { "$jason": {
-          "head": {
-            "title": "Matchpoint",
-            "actions": {
-              "$foreground": { "type": "$reload" },
-              "$pull": { "type": "$reload" },
-              "$load": { "trigger": "onload", "success": { "type": "$render" } },
-              "onload": {
-                "type": "$set",
-                "options": { "authenticity_token": "form_authenticity_token" },
-                "success": { "trigger": "set_score" },
+      { "$jason" => {
+          "head" => {
+            "title" => "Matchpoint",
+            "actions" => {
+              "$foreground" => { "type" => "$reload" },
+              "$pull" => { "type" => "$reload" },
+              "$load" => { "trigger" => "onload", "success" => { "type" => "$render" } },
+              "onload" => {
+                "type" => "$set",
+                "options" => { "authenticity_token" => "form_authenticity_token" },
+                "success" => { "trigger" => "set_score" },
               },
             }
           }
