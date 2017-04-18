@@ -52,7 +52,7 @@ module Jasonette
         end
       RUBY
 
-      instance_eval(source)
+      instance_eval source
       self
     end
 

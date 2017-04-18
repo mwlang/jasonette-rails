@@ -23,6 +23,32 @@ describe PostsController do
       expect(JSON.parse(response.body)).to eq({"$jason"=>{"body"=>{"sections"=>[{"type"=>"partial", "items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]}]}}})
     end
 
+    let(:action_partial_json) do
+      { "$jason": {
+          "head": {
+            "title": "Matchpoint",
+            "actions": {
+              "$foreground": { "type": "$reload" },
+              "$pull": { "type": "$reload" },
+              "$load": { "trigger": "onload", "success": { "type": "$render" } },
+              "onload": {
+                "type": "$set",
+                "options": { "authenticity_token": "form_authenticity_token" },
+                "success": { "trigger": "set_score" },
+              },
+            }
+          }
+        }
+      }
+    end
+
+    it "render a partial within an action" do
+      request.accept = "application/json"
+      get :action_partial, format: :json
+
+      expect(JSON.parse(response.body)).to eq action_partial_json
+    end
+
     it "render a list of posts" do
       request.accept = "application/json"
       get :inline, format: :json

@@ -15,6 +15,9 @@ class PostsController < ApplicationController
   def mixing
   end
 
+  def action_partial
+  end
+  
   # GET /posts/1
   def show
   end
