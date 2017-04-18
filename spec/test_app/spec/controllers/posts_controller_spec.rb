@@ -20,7 +20,7 @@ describe PostsController do
     it "render a list of posts" do
       request.accept = "application/json"
       get :partial, format: :json
-      expect(JSON.parse(response.body)).to eq({"$jason"=>{"body"=>{"sections"=>[{"type"=>"partial", "items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]}]}}})
+      expect(JSON.parse(response.body)).to eq({"$jason"=>{"body"=>{"sections"=>[{"type"=>"partial", "items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]}]}}, "foo"=>"bar"})
     end
 
     let(:action_partial_json) do
