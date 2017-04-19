@@ -4,7 +4,7 @@ module Jasonette
     include ActionView::Helpers
 
     def implicit_set! name, *args, &block
-      if properties.include? name
+      if property_names.include? name
         with_attributes { property_set! name, *args, &block }
       else
         begin
@@ -16,7 +16,7 @@ module Jasonette
     end
 
     def attr_value name
-      if properties.include? name
+      if property_names.include? name
         instance_variable_get :"@#{name}"
       else
         @attributes[name.to_s]
@@ -27,7 +27,7 @@ module Jasonette
       if ::Kernel.block_given?
         implicit_set! name, *args, &block
       else
-        if properties.include? name
+        if property_names.include? name
           return property_get! name
         else
           begin

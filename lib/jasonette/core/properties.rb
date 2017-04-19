@@ -1,16 +1,37 @@
 module Jasonette::Properties
+  class PropertyEnum
+    include Enumerable
+    attr_accessor :properties
+
+    def initialize properties = {}
+      @properties = properties
+    end
+
+    def merge! value
+      properties.merge! value if value.is_a? Hash
+      properties.merge! value.properties if value.is_a? self.class
+    end
+
+    def names; properties.keys end
+    def value; properties end
+
+    def has_type?(name, ptype)
+      value[name.to_sym][ptype.to_sym] rescue false
+    end
+  end
+
   module ClassMethods
 
     def super_property
       properties.merge!(superclass.properties)
     end
 
-    def property name, is_many = false
-      properties.merge! "#{name}".to_sym => { is_many: is_many }
+    def property name, *types
+      properties.merge! "#{name}".to_sym => { is_many: types.include?(:is_many) }
     end
 
     def properties
-      @properties ||= {}
+      PropertyEnum.new @properties ||= {}
     end
   end
 
@@ -18,16 +39,12 @@ module Jasonette::Properties
     base.send :extend, ClassMethods
   end
 
-  def properties
-    self.class.properties.keys
-  end
-
-  def full_properties
-    self.class.properties
+  def property_names
+    self.class.properties.names
   end
 
   def is_many? name
-    full_properties[name.to_sym][:is_many] rescue false
+    self.class.properties.has_type?(name, :is_many)
   end
 
   def ivar_for_property name
@@ -51,7 +68,7 @@ module Jasonette::Properties
   end
 
   def get_all_ivar name
-    instance_variable_get(all_ivar_for_property(name))
+    instance_variable_get(all_ivar_for_property(name)) || []
   end
 
   def get_default_for_property name
@@ -63,7 +80,7 @@ module Jasonette::Properties
   end
 
   def properties_empty?
-    properties.all? do |ivar_name|
+    property_names.all? do |ivar_name|
       ivar = get_ivar(ivar_name)
       ivar.nil? || ivar.empty?
     end
@@ -83,7 +100,7 @@ module Jasonette::Properties
     set_ivar(name, new_klass)
     ivar = get_ivar(name)
     if is_many?(name)
-      ivar_all = get_all_ivar(name) || []
+      ivar_all = get_all_ivar(name)
       set_all_ivar(name, ivar_all << ivar)
     end
   end
@@ -102,58 +119,25 @@ module Jasonette::Properties
   end
 
   def merge_properties
-    properties.each do |property_name|
+    property_names.each do |property_name|
+      property_name = property_name.to_s
       ivar = get_ivar(property_name)
       next if ivar.nil? || ivar.empty?
-      @attributes[property_name.to_s] ||= get_default_for_property(property_name)
-      if @attributes[property_name.to_s].is_a?(Array)
-        @attributes[property_name.to_s] << ivar.attributes!
-      else
-        @attributes[property_name.to_s].merge! ivar.attributes!
-      end
-
+      @attributes[property_name] = get_default_for_property(property_name)
       if is_many?(property_name)
-        property_name = property_name.to_s
-        @attributes.delete property_name if @attributes.has_key?(property_name)
-        if !get_all_ivar(property_name).nil?
-          @attributes[property_name] = [] if @attributes[property_name].nil? || @attributes[property_name].empty?
-          get_all_ivar(property_name).each do |iv|
-            @attributes[property_name] << iv.attributes!
-          end
+        get_all_ivar(property_name).each do |iv|
+          @attributes[property_name] << iv.attributes!
         end
+      else
+        @attributes[property_name].merge! ivar.attributes!
       end
     end
-  end
-
-  def set_target_name(name)
-    instance_variable_set(target_name, name)
-  end
-
-  def get_target_name
-    instance_variable_get(target_name)
-  end
-
-  def target_name
-    "@target_name_#{self.object_id}"
-  end
-
-  def target_name?
-    !get_target_name.nil?
-  end
-
-  def property_sender?
-    [Jasonette::Jason::Head::Actions, Jasonette::Jason::Head::Templates].include?(self.class)
   end
 
   def property_sender target, name, *args, &block
     raise "unhandled definition! : use different property name then `#{name}`" if Object.new.methods.include?(name.to_sym)
     if block_given?
-      if target.property_sender?
-        target.set_target_name name
-        target.instance_eval &block
-      else
-        target.send name, *args, &block
-      end
+      target.send name, *args, &block
     elsif args.one? && args.first.is_a?(Hash)
       target.send name do
         args.first.each{ |key, value| json.set! key, value.to_s }

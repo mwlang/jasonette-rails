@@ -7,7 +7,17 @@ module Jasonette
     property :templates
 
     def template name, *args, &block
-      property_sender templates, name, *args, &block
+      if block_given?
+        item = Jasonette::Body.new(@context) do
+          with_attributes do
+            instance_eval(&block)
+          end
+        end
+        append item, "templates", name
+      else
+        property_sender templates, name, *args
+      end
+      self
     end
 
     def datum name, *args, &block
@@ -19,7 +29,24 @@ module Jasonette
     end
 
     def action name, *args, &block
-      property_sender actions, name, *args, &block
+      if block_given?
+        item = Jasonette::Action.new(@context) do
+          with_attributes do
+            instance_eval(&block)
+          end
+        end
+        append item, "actions", name
+      else
+        property_sender actions, name, *args
+      end
+      self
+    end
+
+    private
+    def append builder, property_name, msg
+      @attributes[property_name] ||= {}
+      @attributes[property_name][msg] ||= {}
+      @attributes[property_name][msg].merge! builder.attributes!
     end
   end
 end

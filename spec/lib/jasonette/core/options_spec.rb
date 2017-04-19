@@ -15,7 +15,6 @@ RSpec.describe Jasonette::Options do
   end
 
   it "builds data as an array" do
-    pending "Build only single data in Array, Not working for more then one data block"
     results = builder.encode do
       data do
         name "Foo"
@@ -42,7 +41,6 @@ RSpec.describe Jasonette::Options do
   end
 
   it "builds form as an array" do
-    pending "Build only single form in Array, Not working for more then one form block"
     results = builder.encode do
       form do
         name "Foo"

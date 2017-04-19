@@ -144,9 +144,7 @@ RSpec.describe Jasonette::Jason::Head do
   context "unhandle property" do
     it "raise error if property name is `method`" do
       expect { builder.encode do
-        action "method" do
-          type "$network.request"
-        end
+        action "method", { type: "$network.request" }
       end }.to raise_error "unhandled definition! : use different property name then `method`"
     end
   end
@@ -196,6 +194,36 @@ RSpec.describe Jasonette::Jason::Head do
       end
 
       expect(results).to eqj expected
+    end
+
+    it "builds actions with args" do
+      results = builder.encode do
+        action "submit", type: "$network.request", success: "$render"
+      end
+
+      expect(results).to eqj({"actions" => {"submit"=>{"type"=>"$network.request", "success"=>"$render"}}})
+    end
+
+    it "builds multiple actions with different key" do
+      results = builder.encode do
+        action "submit1" do
+          type "$network.request1"
+          success do
+            type "$render1"
+          end
+        end
+        action "submit2" do
+          type "$network.request2"
+          success do
+            type "$render2"
+          end
+        end
+      end
+
+      expect(results).to eqj({"actions" => {
+          "submit1"=>{"type"=>"$network.request1", "success"=>{"type"=>"$render1"}},
+          "submit2"=>{"type"=>"$network.request2", "success"=>{"type"=>"$render2"}}}
+      })
     end
   end
 end
