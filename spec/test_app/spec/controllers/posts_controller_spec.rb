@@ -55,6 +55,13 @@ describe PostsController do
       expect(JSON.parse(response.body)).to eq action_partial_json
     end
 
+    it "render an action within a partial" do
+      request.accept = "application/json"
+      get :action_in_partial, format: :json
+
+      expect(JSON.parse(response.body)).to eq action_partial_json
+    end
+
     it "render a list of posts" do
       request.accept = "application/json"
       get :inline, format: :json
