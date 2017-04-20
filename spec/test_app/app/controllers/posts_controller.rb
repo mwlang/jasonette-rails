@@ -2,26 +2,6 @@ class PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
   before_action :set_posts, only: [:index, :partial, :inline, :mixing]
 
-  # GET /posts
-  def index
-  end
-
-  def partial
-  end
-
-  def inline
-  end
-
-  def mixing
-  end
-
-  def action_partial
-  end
-  
-  # GET /posts/1
-  def show
-  end
-
   # GET /posts/new
   def new
     @post = Post.new

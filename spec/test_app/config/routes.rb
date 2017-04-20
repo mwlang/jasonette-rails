@@ -4,6 +4,7 @@ Rails.application.routes.draw do
       get "partial"
       get "inline"
       get "mixing"
+      get "helper"
       get "action_partial"
     end
   end

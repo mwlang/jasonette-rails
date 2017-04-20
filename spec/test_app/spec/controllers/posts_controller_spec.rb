@@ -23,6 +23,12 @@ describe PostsController do
       expect(JSON.parse(response.body)).to eq({"$jason"=>{"body"=>{"sections"=>[{"type"=>"partial", "items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]}]}, "foo"=>"bar"}})
     end
 
+    it "can call helper methods" do
+      request.accept = "application/json"
+      get :helper, format: :json
+      expect(JSON.parse(response.body)).to eq({"$jason"=>{"head"=>{"data"=>{"foo"=>"foo", "app_foo"=>"app_foo", "post_foo"=>"post_foo"}}}})
+    end
+
     let(:action_partial_json) do
       { "$jason" => {
           "head" => {
