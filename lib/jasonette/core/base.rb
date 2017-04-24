@@ -99,7 +99,9 @@ module Jasonette
       new_parent_builder = self.class.new(@context)
       new_parent_builder.with_attributes { instance_eval(&block) }
       new_parent_builder.attributes!.each do |k, v|
-        with_attributes { json.set! k, v }
+        with_attributes do
+          json.set! k, (@attributes[k] ? @attributes[k].merge(v) : v)
+        end
       end
     end
 
