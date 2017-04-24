@@ -116,13 +116,36 @@ module Jasonette
       self
     end
 
+    def with_partial_attributes pjson, &block
+      new_parent_builder = self.class.new(@context)
+      new_parent_builder.with_attributes { instance_eval(&block) }
+      new_parent_builder.attributes!.each do |k, v|
+        with_attributes { json.set! k, v }
+      end
+    end
+
     def inline json
       @attributes.merge! JSON.parse(json)
       self
     end
 
-    def partial! name, *args
-      with_attributes { json.partial! name, *args }
+    # If partial is built as Jbuilder style then partial! is called as example given below.
+    #
+    # Example:
+    #   json.jason do
+    #     partial! "foo/partial", built_as: :json
+    #   end
+    def partial! name, options = {}
+      built_as = options.delete(:built_as)
+      if built_as && built_as == :json
+        with_attributes { json.partial! name, options }
+      else
+        JbuilderTemplate.new(context) do |json|
+          json.partial_lookup_options = {}
+          json.partial_lookup_options[:handler] = self
+          json.partial! name, options
+        end
+      end
     end
 
     def inline! name, *args
