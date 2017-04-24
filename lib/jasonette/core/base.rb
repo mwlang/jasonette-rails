@@ -4,11 +4,13 @@ module Jasonette
     include ActionView::Helpers
 
     def implicit_set! name, *args, &block
-      with_attributes do
-        if properties.include? name
-          property_set! name, *args, &block
-        else
-          json.set!(name) { instance_eval(&block) }
+      if properties.include? name
+        with_attributes { property_set! name, *args, &block }
+      else
+        begin
+          return context_method(name, *args, &block)
+        rescue
+          with_attributes { json.set!(name) { instance_eval(&block) } }
         end
       end
     end
@@ -28,10 +30,13 @@ module Jasonette
         if properties.include? name
           return property_get! name
         else
-          with_attributes { json.set! name, *args }
+          begin
+            return context_method(name, *args, &block)
+          rescue
+            with_attributes { json.set! name, *args }
+          end
         end
       end
-      self
     end
 
     attr_reader :context
@@ -131,6 +136,10 @@ module Jasonette
     def attributes!
       merge_properties
       @attributes
+    end
+
+    def context_method name, *args, &block
+      context.send(name, *args, &block)
     end
   end
 
