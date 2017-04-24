@@ -1,4 +1,4 @@
 json.jason do
   json.partial! "body_partial"
-  partial! "foo"
+  partial! "foo", built_as: :json
 end

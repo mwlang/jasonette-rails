@@ -20,14 +20,22 @@ module Jasonette
   end
 
   module JbuilderExtensions
+    attr_accessor :partial_lookup_options
+
     def j
       JasonSingleton.fetch(@context)
     end
 
     def jason &block
       builder = JasonSingleton.fetch(@context)
-      builder.with_attributes { instance_eval(&block) }
-      _set_value "$jason", builder.attributes!
+
+      if partial_lookup_options
+        parent_builder = partial_lookup_options[:handler]
+        parent_builder.with_partial_attributes self, &block
+      else
+        builder.with_attributes { instance_eval(&block) }
+        _set_value "$jason", builder.attributes!
+      end
       self
     end
 

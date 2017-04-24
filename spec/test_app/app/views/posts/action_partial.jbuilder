@@ -8,7 +8,7 @@ json.jason do
       success { render! }
     end
     action :onload do
-      partial! "data/authenticity_token"
+      partial! "data/authenticity_token", built_as: :json
       success { trigger "set_score" }
     end
   end
