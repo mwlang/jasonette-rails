@@ -142,6 +142,10 @@ module Jasonette
       @attributes
     end
 
+    def set! key, value, *args
+      with_attributes { json.set! key, value, *args }
+    end
+
     def context_method name, *args, &block
       context.send(name, *args, &block)
     end
