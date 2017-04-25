@@ -17,76 +17,6 @@ RSpec.describe Jasonette::Base do
     end
   end
 
-  context "triggers" do
-
-    # { "trigger": "foo"
-    #   "success": {
-    #     "type": "$render"
-    #   }
-    # }
-    it "#trigger with success block" do
-      build = builder.trigger("foo"){ success { type "$render" } }
-      expect(build).to eqj({"trigger"=>"foo", "success"=>{"type"=>"$render"}})
-    end
-
-    # { "trigger": "foo",
-    #   "success": {
-    #     "trigger": "bar",
-    #     "success" {
-    #       "type": "$render"
-    #     }
-    #   }
-    # }
-    it "#trigger with success with another trigger and success block" do
-
-      build = builder.trigger "foo" do
-        success do
-          trigger "bar" do
-            success { type "$render" }
-          end
-        end
-      end
-
-      expect(build).to eqj({"trigger"=>"foo", "success"=>{"trigger"=>"bar", "success"=>{"type"=>"$render"}}})
-    end
-
-    # {
-    #   "trigger": "some_action",
-    #   "options": {
-    #     "key1": "value1",
-    #     "key2": "value2"
-    #   },
-    #   "success": {
-    #     "type": "$render"
-    #   },
-    #   "error": {
-    #     "type": "$render"
-    #   }
-    # }
-    it "trigger with options, success, and error" do
-
-      build = builder.trigger "some_action" do
-        options do
-          key1 "value1"
-          key2 "value2"
-        end
-        success
-        error { type "render" }
-      end
-
-      expect(build).to eqj({
-        "trigger"=>"some_action",
-        "options"=>{
-          "key1"=>"value1",
-          "key2"=>"value2"
-          },
-          "success"=>{"type"=>"$render"},
-          "error"=>{"type"=>"render"}
-        }
-      )
-    end
-  end
-
   context "$jason" do
 
     # { "$jason": {
@@ -105,57 +35,6 @@ RSpec.describe Jasonette::Base do
     end
   end
 
-  context "actions" do
-
-    # { "$load": {
-    #   "trigger": "onload",
-    #   "success": {
-    #     "type": "$render"
-    #     }
-    #   }
-    # }
-    it "#action $load witn onload trigger and success block" do
-      build = builder.action "$load" do
-        trigger "onload"
-        success { type "$render" }
-      end
-      expect(build).to eqj({"$load"=>{"trigger"=>"onload", "success"=>{"type"=>"$render"}}})
-    end
-
-    # { "$load": {
-    #   "trigger": "load",
-    #   "success": {
-    #     "type": "$render"
-    #     }
-    #   }
-    # }
-    it "#action $load w/just onload trigger" do
-      build = builder.action("$load") { trigger "onload" }
-      expect(build).to eqj({"$load" => {"trigger"=>"onload"}})
-    end
-  end
-
-  context "#success" do
-
-    # { "success": {
-    #    "type": "$render"
-    #   }
-    # }
-    it "just success" do
-      build = builder.success
-      expect(build).to eqj({"success"=>{"type"=>"$render"}})
-    end
-
-    # { "success": {
-    #    "type": "$reload"
-    #   }
-    # }
-    it "success w/block" do
-      build = builder.success { type "$reload" }
-      expect(build).to eqj({"success"=>{"type"=>"$reload"}})
-    end
-  end
-
   context "opening act" do
     it "any missing method opens named block" do
       build = builder.match do
@@ -163,6 +42,24 @@ RSpec.describe Jasonette::Base do
         max_sets "5"
       end
       expect(build).to eqj({"match"=>{"current_set"=>"0", "max_sets"=>"5"}})
+    end
+  end
+
+  context "#_method" do
+    it "build in method with name" do
+      build = jbuild.jason do
+        _method "Foo"
+      end
+      expect(build.attributes!).to eqj("$jason" => {"method" => "Foo"})
+    end
+
+    it "build in method with block" do
+      build = jbuild.jason do
+        _method do
+          item "Foo"
+        end
+      end
+      expect(build.attributes!).to eqj("$jason" => {"method" => {"item" => "Foo"}})
     end
   end
 

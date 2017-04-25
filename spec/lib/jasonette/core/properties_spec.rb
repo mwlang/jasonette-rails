@@ -46,8 +46,8 @@ RSpec.describe Jasonette::Properties do
         builder
       end
 
-      its(:properties) { is_expected.to_not be_empty }
-      its(:properties) { is_expected.to include :bar }
+      its(:property_names) { is_expected.to_not be_empty }
+      its(:property_names) { is_expected.to include :bar }
       its(:attributes!) { is_expected.to eq({"bar" => {"type"=>"foo"}}) }
       its(:properties_empty?) { is_expected.to be false }
       it "instantiates a builder class" do
@@ -58,8 +58,8 @@ RSpec.describe Jasonette::Properties do
     context "bar.type 'baz'" do
       subject { builder.bar.type 'baz'; builder }
 
-      its(:properties) { is_expected.to_not be_empty }
-      its(:properties) { is_expected.to include :bar }
+      its(:property_names) { is_expected.to_not be_empty }
+      its(:property_names) { is_expected.to include :bar }
       its(:attributes!) { is_expected.to eq({"bar" => {"type"=>"baz"}}) }
       its(:properties_empty?) { is_expected.to be false }
       it "instantiates a builder class" do
@@ -70,11 +70,21 @@ RSpec.describe Jasonette::Properties do
     context "bar=nil" do
       subject { builder }
 
-      its(:properties) { is_expected.to_not be_empty }
-      its(:properties) { is_expected.to include :bar }
+      its(:property_names) { is_expected.to_not be_empty }
+      its(:property_names) { is_expected.to include :bar }
       its(:properties_empty?) { is_expected.to be true }
     end
   end
 
+  context "#super_property" do
+    class FooBuilder < BarBuilder
+      super_property
+      property :foo
+    end
+
+    subject { FooBuilder.new }
+
+    its(:property_names) { is_expected.to include :bar, :foo }
+  end
 
 end

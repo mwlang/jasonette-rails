@@ -1,6 +1,5 @@
 module Jasonette
-  class Jason::Body < Jasonette::Base
-    property :header
-    property :sections, true
+  class Jason::Body < Jasonette::Body
+    super_property
   end
 end

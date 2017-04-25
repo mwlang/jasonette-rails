@@ -146,5 +146,104 @@ RSpec.describe Jasonette::Items do
         ]
       })
     end
+
+    it "builds an action on label" do
+      build = build_with(described_class) do
+        label do
+          text "Check out Live DEMO"
+          action do
+            type "$network.request"
+            options do
+              url "https://url/submit"
+              action_method "POST"
+            end
+            success do
+              type "$render"
+            end
+            error do
+              type "$util.banner"
+              options do
+                title "Error"
+                description "Something went wrong."
+              end
+            end
+          end
+        end
+      end
+      expect(build).to eqj({
+        "items"=>[{
+          "type"=>"label",
+          "text"=>"Check out Live DEMO",
+          "action" => {
+            "type" => "$network.request",
+            "options" => { "url" => "https://url/submit", "method" => "POST" },
+            "success" => { "type" => "$render"  },
+            "error" => {
+              "type" => "$util.banner",
+              "options" => { "title" => "Error", "description" => "Something went wrong." }
+            }
+          }
+        }]
+      })
+    end
+
+    it "builds an action trigger with data on label" do
+      build = build_with(described_class) do
+        label do
+          text "Check out Live DEMO"
+          action do
+            trigger "refresh_view"
+            type "$network.request"
+            options do
+              url "https://url/submit"
+              action_method "POST"
+              data do
+                id "12"
+                name "Samule"
+              end
+            end
+            success do
+              type "$render"
+            end
+          end
+        end
+      end
+      expect(build).to eqj({
+        "items"=>[{
+          "type"=>"label",
+          "text"=>"Check out Live DEMO",
+          "action" => {
+            "trigger" => "refresh_view",
+            "type" => "$network.request",
+            "success" => { "type" => "$render" },
+            "options" => {
+              "url" => "https://url/submit",
+              "method" => "POST",
+              "data" => [{ "id" => "12", "name" => "Samule" }]
+            }
+          }
+        }]
+      })
+    end
+
+    it "builds a simple text" do
+      build = build_with(described_class) do
+        text "Check out Live DEMO"
+      end
+
+      expect(build).to eqj({
+        "items"=>[{"text"=>"Check out Live DEMO", "type"=>"text"}]
+      })
+    end
+
+    it "builds a simple video" do
+      build = build_with(described_class) do
+        video "file://demo.json"
+      end
+
+      expect(build).to eqj({
+        "items"=>[{"type"=>"video","file_url"=>"file://demo.json"}]
+      })
+    end
   end
 end

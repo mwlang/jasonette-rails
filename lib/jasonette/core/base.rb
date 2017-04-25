@@ -4,7 +4,7 @@ module Jasonette
     include ActionView::Helpers
 
     def implicit_set! name, *args, &block
-      if properties.include? name
+      if property_names.include? name
         with_attributes { property_set! name, *args, &block }
       else
         begin
@@ -16,7 +16,7 @@ module Jasonette
     end
 
     def attr_value name
-      if properties.include? name
+      if property_names.include? name
         instance_variable_get :"@#{name}"
       else
         @attributes[name.to_s]
@@ -27,7 +27,7 @@ module Jasonette
       if ::Kernel.block_given?
         implicit_set! name, *args, &block
       else
-        if properties.include? name
+        if property_names.include? name
           return property_get! name
         else
           begin
@@ -51,39 +51,6 @@ module Jasonette
       instance_eval(&::Proc.new) if ::Kernel.block_given?
     end
 
-    def trigger name, &block
-      with_attributes do
-        json.trigger name
-        instance_eval(&block) if block_given?
-      end
-    end
-
-    def action name="action", &block
-      with_attributes do
-        json.set! name do
-          block_given? ? instance_eval(&block) : success { type "$render" }
-        end
-      end
-    end
-
-    def render!
-      with_attributes { json.type "$render" }
-    end
-
-    def reload!
-      with_attributes { json.type "$reload" }
-    end
-
-    def success &block
-      with_attributes do
-        if block_given?
-          json.success { instance_eval(&block) }
-        else
-          json.success { json.type "$render" }
-        end
-      end
-    end
-
     def target!
       attributes!.to_json
     end
@@ -101,6 +68,18 @@ module Jasonette
       json.set! "class", name
     end
     alias :css_class :klass
+
+    def _method name = nil
+      if block_given?
+        item = self.class.new(@context) do
+          with_attributes { instance_eval(&::Proc.new) }
+        end
+        with_attributes { json.set! 'method', item.attributes! }
+      else
+        with_attributes { json.set! 'method', name }
+      end
+    end
+    alias :action_method :_method
 
     def with_attributes
       if json
@@ -120,7 +99,9 @@ module Jasonette
       new_parent_builder = self.class.new(@context)
       new_parent_builder.with_attributes { instance_eval(&block) }
       new_parent_builder.attributes!.each do |k, v|
-        with_attributes { json.set! k, v }
+        with_attributes do
+          json.set! k, (@attributes[k] ? @attributes[k].merge(v) : v)
+        end
       end
     end
 

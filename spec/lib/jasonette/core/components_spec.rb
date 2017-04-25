@@ -146,5 +146,55 @@ RSpec.describe Jasonette::Components do
         ]
       })
     end
+
+    it "builds a fancy label with action" do
+      build = build_with(described_class) do
+        label do
+          text "Check out Live DEMO"
+          action do
+            type "$network.request"
+            options do
+              url "https://url/submit"
+              action_method "POST"
+              data do
+                id "12"
+                name "Samule"
+              end
+            end
+            success do
+              type "$render"
+            end
+          end
+
+          href do
+            url "file://demo.json"
+            fresh "true"
+          end
+        end
+      end
+      expect(build).to eqj({
+        "components"=>[
+          {
+            "type"=>"label",
+            "text"=>"Check out Live DEMO",
+            "href"=>{
+              "url"=>"file://demo.json",
+              "fresh"=>"true"
+            },
+            "action" => {
+              "type" => "$network.request",
+              "success" => { "type" => "$render" },
+              "options" => {
+                "url" => "https://url/submit",
+                "method" => "POST",
+                "data" => [
+                  { "id" => "12", "name" => "Samule" }
+                ]
+              }
+            }
+          }
+        ]
+      })
+    end
   end
 end

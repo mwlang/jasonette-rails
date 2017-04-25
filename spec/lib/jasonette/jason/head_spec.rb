@@ -140,4 +140,104 @@ RSpec.describe Jasonette::Jason::Head do
       expect(results.attributes!).to eq expected_with_col
     end
   end
+
+  context "unhandle property" do
+    it "raise error if property name is `method`" do
+      expect { builder.encode do
+        action "method", { type: "$network.request" }
+      end }.to raise_error "unhandled definition! : use different property name then `method`"
+    end
+  end
+
+  context "actions" do
+    let(:expected) do
+      {
+        "actions" => {
+          "submit_item" => {
+            "type" => "$network.request",
+            "options" => { "url" => "https://url/submit", "method" => "POST" },
+            "success" => { "type" => "$render" },
+            "error" => {
+              "type" => "$util.banner",
+              "options" => { "title" => "Error", "description" => "Something went wrong." }
+            }
+          }
+        }
+      }
+    end
+
+    it "builds an option with action method" do
+      results = builder.encode do
+        action "submit_item" do
+          type "$network.request"
+          options do
+            url "https://url/submit"
+            action_method "POST"
+          end
+          success do
+            type "$render"
+          end
+          error do
+            type "$util.banner"
+            options do
+              title "Error"
+              description "Something went wrong."
+            end
+          end
+        end
+      end
+
+      expect(results).to eqj expected
+    end
+
+    it "builds actions with args" do
+      results = builder.encode do
+        action "submit", type: "$network.request", success: "$render"
+      end
+
+      expect(results).to eqj({"actions" => {"submit"=>{"type"=>"$network.request", "success"=>"$render"}}})
+    end
+
+    it "builds multiple actions with different key" do
+      results = builder.encode do
+        action "submit1" do
+          type "$network.request1"
+          success do
+            type "$render1"
+          end
+        end
+        action "submit2" do
+          type "$network.request2"
+          success do
+            type "$render2"
+          end
+        end
+      end
+
+      expect(results).to eqj({"actions" => {
+          "submit1"=>{"type"=>"$network.request1", "success"=>{"type"=>"$render1"}},
+          "submit2"=>{"type"=>"$network.request2", "success"=>{"type"=>"$render2"}}}
+      })
+    end
+  end
+
+  context "templates" do
+    it "builds with individual style section"  do
+      results = builder.encode do
+        title "Foobar"
+        template "foo" do
+          style do
+            padding "10"
+          end
+        end
+        template "bar" do
+          style do
+            padding "12"
+          end
+        end
+      end
+
+      expect(results).to eqj({"title"=>"Foobar", "templates"=>{"foo"=>{"style"=>{"padding"=>"10"}}, "bar"=>{"style"=>{"padding"=>"12"}}}})
+    end
+  end
 end
