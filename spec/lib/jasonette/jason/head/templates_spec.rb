@@ -14,13 +14,7 @@ RSpec.describe Jasonette::Jason::Head::Templates do
 
     expect(results).to eqj ({
       "sections" => [{
-        "items" => [{
-          "type" => "image",
-          "url" => "{{$jason.image}}"
-        }, {
-          "type" => "label",
-          "text" => "{{$jason.text}}"
-        }]
+        "items" => [{"type" => "image", "url" => "{{$jason.image}}"}, {"type" => "label", "text" => "{{$jason.text}}"}]
       }]
     })
   end

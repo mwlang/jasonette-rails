@@ -176,17 +176,11 @@ RSpec.describe Jasonette::Items do
           "text"=>"Check out Live DEMO",
           "action" => {
             "type" => "$network.request",
-            "options" => {
-              "url" => "https://url/submit",
-              "method" => "POST"
-            },
+            "options" => { "url" => "https://url/submit", "method" => "POST" },
             "success" => { "type" => "$render"  },
             "error" => {
               "type" => "$util.banner",
-              "options" => {
-                "title" => "Error",
-                "description" => "Something went wrong."
-              }
+              "options" => { "title" => "Error", "description" => "Something went wrong." }
             }
           }
         }]
@@ -221,13 +215,11 @@ RSpec.describe Jasonette::Items do
           "action" => {
             "trigger" => "refresh_view",
             "type" => "$network.request",
-              "success" => { "type" => "$render" },
-              "options" => {
+            "success" => { "type" => "$render" },
+            "options" => {
               "url" => "https://url/submit",
               "method" => "POST",
-              "data" => [
-                { "id" => "12", "name" => "Samule" }
-              ]
+              "data" => [{ "id" => "12", "name" => "Samule" }]
             }
           }
         }]
@@ -240,12 +232,7 @@ RSpec.describe Jasonette::Items do
       end
 
       expect(build).to eqj({
-        "items"=>[
-          {
-            "text"=>"Check out Live DEMO",
-            "type"=>"text"
-          }
-        ]
+        "items"=>[{"text"=>"Check out Live DEMO", "type"=>"text"}]
       })
     end
 
@@ -255,12 +242,7 @@ RSpec.describe Jasonette::Items do
       end
 
       expect(build).to eqj({
-        "items"=>[
-          {
-            "type"=>"video",
-            "file_url"=>"file://demo.json"
-          }
-        ]
+        "items"=>[{"type"=>"video","file_url"=>"file://demo.json"}]
       })
     end
   end

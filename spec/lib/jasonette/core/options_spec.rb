@@ -5,18 +5,6 @@ RSpec.describe Jasonette::Options do
   it "builds data as an array" do
     results = builder.encode do
       data do
-        id "1"
-        name "Bar"
-      end
-    end
-    expect(results).to eqj({
-      "data" => [{"id" => "1", "name" => "Bar"}]
-    })
-  end
-
-  it "builds data as an array" do
-    results = builder.encode do
-      data do
         name "Foo"
       end
       data do
@@ -39,18 +27,6 @@ RSpec.describe Jasonette::Options do
     end
     expect(results).to eqj({
       "data" => { "FooKey" => {"name" => "Foo"}, "name" => "Bar" }
-    })
-  end
-
-  it "builds form as an array" do
-    results = builder.encode do
-      form do
-        name "username"
-        placeholder "Enter username"
-      end
-    end
-    expect(results).to eqj({
-      "form" => [{"name"=>"username", "placeholder"=>"Enter username"}]
     })
   end
 

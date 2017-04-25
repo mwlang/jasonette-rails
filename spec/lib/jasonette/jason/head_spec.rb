@@ -155,17 +155,11 @@ RSpec.describe Jasonette::Jason::Head do
         "actions" => {
           "submit_item" => {
             "type" => "$network.request",
-            "options" => {
-              "url" => "https://url/submit",
-              "method" => "POST"
-            },
+            "options" => { "url" => "https://url/submit", "method" => "POST" },
             "success" => { "type" => "$render" },
             "error" => {
               "type" => "$util.banner",
-              "options" => {
-                "title" => "Error",
-                "description" => "Something went wrong."
-              }
+              "options" => { "title" => "Error", "description" => "Something went wrong." }
             }
           }
         }
@@ -228,7 +222,7 @@ RSpec.describe Jasonette::Jason::Head do
   end
 
   context "templates" do
-    it "build with individual style section"  do
+    it "builds with individual style section"  do
       results = builder.encode do
         title "Foobar"
         template "foo" do

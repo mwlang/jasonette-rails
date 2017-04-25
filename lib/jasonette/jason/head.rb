@@ -9,9 +9,7 @@ module Jasonette
     def template name, *args, &block
       if block_given?
         item = Jasonette::Body.new(@context) do
-          with_attributes do
-            instance_eval(&block)
-          end
+          with_attributes { instance_eval(&block) }
         end
         append item, "templates", name
       else
@@ -31,9 +29,7 @@ module Jasonette
     def action name, *args, &block
       if block_given?
         item = Jasonette::Action.new(@context) do
-          with_attributes do
-            instance_eval(&block)
-          end
+          with_attributes { instance_eval(&block) }
         end
         append item, "actions", name
       else
