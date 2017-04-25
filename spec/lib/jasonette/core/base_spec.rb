@@ -221,4 +221,10 @@ RSpec.describe Jasonette::Base do
     end
   end
 
+  it "set key/values that are not easily expressed as method" do
+    build = builder.encode do
+      set! "color:disabled", "1100"
+    end
+    expect(build).to eqj "color:disabled"=>"1100"
+  end
 end
