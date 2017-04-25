@@ -28,6 +28,20 @@ RSpec.describe Jasonette::Options do
     })
   end
 
+  it "builds data as a pair of key/value" do
+    results = builder.encode do
+      data "FooKey" do
+        name "Foo"
+      end
+      data do
+        name "Bar"
+      end
+    end
+    expect(results).to eqj({
+      "data" => { "FooKey" => {"name" => "Foo"}, "name" => "Bar" }
+    })
+  end
+
   it "builds form as an array" do
     results = builder.encode do
       form do

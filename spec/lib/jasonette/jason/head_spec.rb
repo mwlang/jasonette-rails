@@ -226,4 +226,24 @@ RSpec.describe Jasonette::Jason::Head do
       })
     end
   end
+
+  context "templates" do
+    it "build with individual style section"  do
+      results = builder.encode do
+        title "Foobar"
+        template "foo" do
+          style do
+            padding "10"
+          end
+        end
+        template "bar" do
+          style do
+            padding "12"
+          end
+        end
+      end
+
+      expect(results).to eqj({"title"=>"Foobar", "templates"=>{"foo"=>{"style"=>{"padding"=>"10"}}, "bar"=>{"style"=>{"padding"=>"12"}}}})
+    end
+  end
 end

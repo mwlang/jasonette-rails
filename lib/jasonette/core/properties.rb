@@ -1,4 +1,6 @@
 module Jasonette::Properties
+  TYPES = [:is_many, :is_single]
+
   class PropertyEnum
     include Enumerable
     attr_accessor :properties
@@ -27,7 +29,7 @@ module Jasonette::Properties
     end
 
     def property name, *types
-      properties.merge! "#{name}".to_sym => { is_many: types.include?(:is_many) }
+      properties.merge! "#{name}".to_sym => TYPES.map { |type| { type => types.include?(type) } }.reduce({}, :merge)
     end
 
     def properties
@@ -43,8 +45,24 @@ module Jasonette::Properties
     self.class.properties.names
   end
 
-  def is_many? name
-    self.class.properties.has_type?(name, :is_many)
+  TYPES.each do |type|
+    define_method("#{type}?") { |name| self.class.properties.has_type?(name, type) }
+    define_method("ivar_#{type}_for_property") { |name| "@#{type}_#{name}" }
+    define_method("get_#{type}_ivar") do |name|
+      instance_variable_get(send("ivar_#{type}_for_property", name)) || (is_many?(name) ? [] : nil)
+    end
+    define_method("set_#{type}_ivar") do |name, value|
+      instance_variable_set(send("ivar_#{type}_for_property", name), value)
+    end
+  end
+  define_method("property_type_methods") { TYPES.map { |type| "#{type}?" } }
+
+  def has_any_property_type? name
+    property_type_methods.map { |m| send(m, name) }.any?
+  end
+
+  def has_property? name
+    property_names.include?(name.to_sym)
   end
 
   def ivar_for_property name
@@ -57,18 +75,6 @@ module Jasonette::Properties
 
   def get_ivar name
     instance_variable_get(ivar_for_property(name))
-  end
-
-  def all_ivar_for_property name
-    "@all_#{name}"
-  end
-
-  def set_all_ivar name, value
-    instance_variable_set(all_ivar_for_property(name), value)
-  end
-
-  def get_all_ivar name
-    instance_variable_get(all_ivar_for_property(name)) || []
   end
 
   def get_default_for_property name
@@ -93,27 +99,30 @@ module Jasonette::Properties
     klass
   end
 
-  def all_instance_variable_set name
+  def all_instance_variable_set name, *args
     klass = klass_for_property name
     new_klass = klass.new(@context)
 
-    set_ivar(name, new_klass)
+    set_ivar(name, new_klass) if (get_ivar(name).nil? || is_many?(name))
     ivar = get_ivar(name)
+
+    if is_single?(name)
+      new_klass.set_is_single_ivar(name, args.first)
+    end
+
     if is_many?(name)
-      ivar_all = get_all_ivar(name)
-      set_all_ivar(name, ivar_all << ivar)
+      ivar_all = get_is_many_ivar(name)
+      set_is_many_ivar(name, ivar_all << ivar)
     end
   end
 
-  def property_get! name
-    if get_ivar(name).nil? || is_many?(name)
-      all_instance_variable_set(name)
-    end
+  def property_get! name, *args
+    all_instance_variable_set(name, *args)
     get_ivar(name)
   end
 
   def property_set! name, *args, &block
-    ivar = property_get! name
+    ivar = property_get! name, *args
     return ivar unless block_given?
     ivar.tap { |v| v.encode(&block) }
   end
@@ -124,12 +133,26 @@ module Jasonette::Properties
       ivar = get_ivar(property_name)
       next if ivar.nil? || ivar.empty?
       @attributes[property_name] = get_default_for_property(property_name)
-      if is_many?(property_name)
-        get_all_ivar(property_name).each do |iv|
-          @attributes[property_name] << iv.attributes!
-        end
-      else
+
+      if !has_any_property_type?(property_name)
         @attributes[property_name].merge! ivar.attributes!
+        next
+      end
+
+      if is_many?(property_name)
+        get_is_many_ivar(property_name).each do |iv|
+          if is_single?(property_name) && (single_ivar = iv.get_is_single_ivar(property_name))
+            @attributes[property_name] = @attributes[property_name].reduce({}, :merge) if @attributes[property_name].is_a?(Array)
+            @attributes[property_name][single_ivar] ||= {}
+            @attributes[property_name][single_ivar].merge! iv.attributes!
+          else
+            if @attributes[property_name].is_a?(Hash)
+              @attributes[property_name].merge! iv.attributes!
+            else
+              @attributes[property_name] << iv.attributes!
+            end
+          end
+        end
       end
     end
   end
