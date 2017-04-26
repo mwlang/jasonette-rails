@@ -1,10 +1,10 @@
-RSpec.describe Jasonette::Sections do
+RSpec.describe Jasonette::Body::Sections do
 
   it "#title" do
     results = build_with(described_class) do
       title "Foobar"
     end
-    expect(results.attributes).to eqj({"title" => "Foobar"})
+    expect(results).to eqj("title" => "Foobar")
   end
 
   it "#items" do
@@ -15,12 +15,7 @@ RSpec.describe Jasonette::Sections do
       end
     end
 
-    expect(results.attributes!).to eq({
-      "items"=>[
-        {"text"=>"Foo", "type"=>"label"},
-        {"text"=>"Bar", "type"=>"label"}
-      ]
-    })
+    expect(results).to eqj("items"=>[{"text"=>"Foo", "type"=>"label"},{"text"=>"Bar", "type"=>"label"}])
   end
 
   it "#items iterated" do
@@ -33,11 +28,6 @@ RSpec.describe Jasonette::Sections do
       end
     end
 
-    expect(results.attributes!).to eq({
-      "items"=>[
-        {"text"=>"Foo", "type"=>"label"},
-        {"text"=>"Bar", "type"=>"label"}
-      ]
-    })
+    expect(results).to eqj("items"=>[{"text"=>"Foo", "type"=>"label"},{"text"=>"Bar", "type"=>"label"}])
   end
 end

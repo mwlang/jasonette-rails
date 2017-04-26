@@ -73,4 +73,14 @@ RSpec.describe Jasonette::Jason::Body do
       ]}
     )
   end
+
+  it "builds layers as an array" do
+    results = builder.encode do
+      layers do
+        label "Foo"
+        label "Bar"
+      end
+    end
+    expect(results.attributes!).to eq("layers"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}])
+  end
 end

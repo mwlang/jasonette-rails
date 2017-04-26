@@ -1,4 +1,4 @@
-RSpec.describe Jasonette::Jason::Body::Header::Search do
+RSpec.describe Jasonette::Body::Header::Search do
 
   let(:builder) { build_with(described_class) }
 

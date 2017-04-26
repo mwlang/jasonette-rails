@@ -245,5 +245,39 @@ RSpec.describe Jasonette::Items do
         "items"=>[{"type"=>"video","file_url"=>"file://demo.json"}]
       })
     end
+
+    it "builds a textfield" do
+      build = build_with(described_class) do
+        textfield "password", "foo1234" do
+          placeholder "Password..."
+        end
+      end
+
+      expect(build).to eqj({
+        "items" => [{"type"=>"textfield", "name"=>"password", "value"=>"foo1234", "placeholder"=>"Password..."}]
+      })
+    end
+
+    it "builds a textarea" do
+      build = build_with(described_class) do
+        textarea "status", "fooing..." do
+          placeholder "Status update"
+        end
+      end
+
+      expect(build).to eqj({
+        "items" => [{"type"=>"textarea", "name"=>"status", "value"=>"fooing...", "placeholder"=>"Status update"}]
+      })
+    end
+
+    context "#skip_type" do
+      it "simple text" do
+        build = build_with(described_class) do
+          text "Check out Live DEMO", true
+        end
+
+        expect(build).to eqj({"items"=>[{"text"=>"Check out Live DEMO"}]})
+      end
+    end
   end
 end

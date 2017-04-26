@@ -6,7 +6,7 @@ module Jasonette
     def append builder
       @attributes["components"] ||= []
       @attributes["components"] << builder.attributes!
-      self
+      builder
     end
 
   end
