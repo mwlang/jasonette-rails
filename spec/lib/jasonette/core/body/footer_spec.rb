@@ -21,7 +21,7 @@ RSpec.describe Jasonette::Body::Footer do
         end
       end
     end
-    expect(results).to eqj("input" => {"left"=>{"url"=>"foo_image_url"}, "right"=>{"text"=>"Back"}},
+    expect(results).to eqj("input" => {"left"=>{"image"=>"foo_image_url"}, "right"=>{"text"=>"Back"}},
       "style" => {"background"=>"#555555", "color"=>"#FFFFFF"},
       "tabs" => {"image"=>{"action"=>{"trigger"=>"search_for_it"}}})
   end

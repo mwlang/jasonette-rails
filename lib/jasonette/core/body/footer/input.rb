@@ -3,7 +3,7 @@ module Jasonette
     property :style
 
     def left uri=nil, &block
-      append Jasonette::Items.new(context).image(uri, true, &block), "left"
+      append Jasonette::Items.new(context).image(uri, true, "image", &block), "left"
     end
 
     def right caption=nil, &block

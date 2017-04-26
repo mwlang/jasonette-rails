@@ -28,11 +28,13 @@ module Jasonette
       append item
     end
 
-    def image uri=nil, skip_type=false
+    def image uri=nil, skip_type=false, url_key="url"
       item = Jasonette::Item.new(@context) do
         type "image" unless skip_type
-        url uri unless uri.nil?
-        with_attributes { instance_eval(&::Proc.new) } if block_given?
+        with_attributes do
+          json.set! url_key, uri unless uri.nil?
+          instance_eval(&::Proc.new) if block_given?
+        end
       end
       append item
     end

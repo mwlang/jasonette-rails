@@ -11,7 +11,7 @@ RSpec.describe Jasonette::Body::Footer::Input do
         end
       end
     end
-    expect(results).to eqj("left"=>{"url"=>"foo_image_url", "action"=>{"trigger"=>"search_for_it", "success"=>{"type"=>"$reload"}}})
+    expect(results).to eqj("left"=>{"image"=>"foo_image_url", "action"=>{"trigger"=>"search_for_it", "success"=>{"type"=>"$reload"}}})
   end
 
   it "#right" do
