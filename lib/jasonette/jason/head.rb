@@ -43,6 +43,7 @@ module Jasonette
       @attributes[property_name] ||= {}
       @attributes[property_name][msg] ||= {}
       @attributes[property_name][msg].merge! builder.attributes!
+      builder
     end
   end
 end
