@@ -3,15 +3,15 @@ module Jasonette
     property :style
 
     def left uri=nil, &block
-      append Jasonette::Items.new(context).image(uri, false, &block), "left"
+      append Jasonette::Items.new(context).image(uri, true, &block), "left"
     end
 
     def right caption=nil, &block
-      append Jasonette::Items.new(context).label(caption, false, &block), "right"
+      append Jasonette::Items.new(context).label(caption, true, &block), "right"
     end
 
     def textfield name=nil, value=nil, &block
-      append Jasonette::Items.new(context).textfield(name, value, false, &block), "textfield"
+      append Jasonette::Items.new(context).textfield(name, value, true, &block), "textfield"
     end
 
     private

@@ -269,5 +269,15 @@ RSpec.describe Jasonette::Items do
         "items" => [{"type"=>"textarea", "name"=>"status", "value"=>"fooing...", "placeholder"=>"Status update"}]
       })
     end
+
+    context "#skip_type" do
+      it "simple text" do
+        build = build_with(described_class) do
+          text "Check out Live DEMO", true
+        end
+
+        expect(build).to eqj({"items"=>[{"text"=>"Check out Live DEMO"}]})
+      end
+    end
   end
 end
