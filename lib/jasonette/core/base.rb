@@ -146,6 +146,19 @@ module Jasonette
       with_attributes { json.set! key, value, *args }
     end
 
+    def merge! key
+      case key
+        when ActiveSupport::SafeBuffer
+          JbuilderTemplate.new(context) do |json|
+            json.partial_lookup_options = {}
+            json.partial_lookup_options[:handler] = self
+            json.instance_eval(MultiJson.load(key)["$jason_outflow_content"] || '')
+          end
+        when Hash
+          @attributes.merge! key
+      end
+    end
+
     def context_method name, *args, &block
       context.send(name, *args, &block)
     end
