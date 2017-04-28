@@ -7,6 +7,8 @@ Rails.application.routes.draw do
       get "helper"
       get "action_partial"
       get "action_in_partial"
+      get "with_layout"
+      get "without_layout"
     end
   end
 

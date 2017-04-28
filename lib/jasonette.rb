@@ -36,3 +36,6 @@ require_relative 'jasonette/jason/body'
 
 # Inject Jasonette into Jbuilder
 require_relative 'jasonette/jbuilder_extensions'
+
+# Append ActionView
+require_relative 'jasonette/action_view_extensions'

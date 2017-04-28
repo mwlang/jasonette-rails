@@ -79,4 +79,22 @@ describe PostsController do
       ]}}})
     end
   end
+
+  context "render" do
+    describe "with layout" do
+      it "builds only template" do
+        request.accept = "application/json"
+        get :without_layout, format: :json
+        expect(JSON.parse(response.body)).to eq("$jason" => {"foo"=>"in template"})
+      end
+    end
+
+    describe "with layout" do
+      it "builds layout and template" do
+        request.accept = "application/json"
+        get :with_layout, format: :json
+        expect(JSON.parse(response.body)).to eq("$jason" => {"head"=>{"foo"=>"in template"}})
+      end
+    end
+  end
 end

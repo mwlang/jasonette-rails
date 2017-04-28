@@ -124,4 +124,11 @@ RSpec.describe Jasonette::Base do
     end
     expect(build).to eqj "color:disabled"=>"1100"
   end
+
+  it "#merge!" do
+    build = builder.encode do
+      merge! "title" => "foo", "color" => "1100"
+    end
+    expect(build).to eqj "title"=>"foo", "color"=>"1100"
+  end
 end

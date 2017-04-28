@@ -33,10 +33,20 @@ module Jasonette
         parent_builder = partial_lookup_options[:handler]
         parent_builder.with_partial_attributes self, &block
       else
-        builder.with_attributes { instance_eval(&block) }
-        _set_value "$jason", builder.attributes!
+        if has_layout?
+          _set_value "$jason_outflow_content", block.source
+        else
+          builder.with_attributes { instance_eval(&block) }
+          _set_value "$jason", builder.attributes!
+        end
       end
       self
+    end
+
+    def has_layout?
+      _has_layout = j.instance_variable_get("@_has_layout") || false
+      j.instance_variable_set("@_has_layout", false)
+      _has_layout
     end
 
     def build name, &block
