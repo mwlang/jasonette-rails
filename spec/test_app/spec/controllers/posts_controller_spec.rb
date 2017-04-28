@@ -95,6 +95,12 @@ describe PostsController do
         get :with_layout, format: :json
         expect(JSON.parse(response.body)).to eq("$jason" => {"head"=>{"foo"=>"in template"}})
       end
+
+      it "builds template with local template variables" do
+        request.accept = "application/json"
+        get :with_template_vars, format: :json, template_vars: ["foo", "bar"]
+        expect(JSON.parse(response.body)).to eq("$jason"=>{"head"=>{"foo"=>"in template", "template_var_foo"=>"foo", "template_var_bar"=>"bar", "template_var_baz"=>"baz"}})
+      end
     end
   end
 end

@@ -1,9 +1,13 @@
 class PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
-  before_action :set_posts, only: [:index, :partial, :inline, :mixing, :with_layout, :without_layout]
+  before_action :set_posts, only: [:index, :partial, :inline, :mixing]
 
   def with_layout
     render file: "posts/without_layout", layout: "jason"
+  end
+
+  def with_template_vars
+    render file: "posts/with_template_vars", layout: "jason"
   end
 
   # GET /posts/new
