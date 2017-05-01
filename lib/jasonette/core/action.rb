@@ -1,6 +1,8 @@
 module Jasonette
   class Action < Jasonette::Base
     property :options
+    property :success
+    property :error
 
     def trigger name, &block
       with_attributes do
@@ -18,7 +20,7 @@ module Jasonette
     end
 
     def success &block
-      item = Jasonette::Action.new(@context) do
+      @success = Jasonette::Action.new(@context) do
         with_attributes do
           if block_given?
             instance_eval(&block)
@@ -27,24 +29,16 @@ module Jasonette
           end
         end
       end
-      append item, "success"
       self
     end
 
     def error &block
-      item = Jasonette::Action.new(@context) do
+      @error = Jasonette::Action.new(@context) do
         with_attributes do
           instance_eval(&block)
         end
       end
-      append item, "error"
       self
-    end
-
-    private
-    def append builder, msg
-      @attributes[msg] ||= {}
-      @attributes[msg].merge! builder.attributes!
     end
   end
 end

@@ -67,6 +67,15 @@ module Jasonette
       append item
     end
 
+    def space height=nil, skip_type=false
+      item = Jasonette::Item.new(@context) do
+        type "space" unless skip_type
+        height height unless height.nil?
+        with_attributes { instance_eval(&::Proc.new) } if block_given?
+      end
+      append item
+    end
+
     private
 
     def append builder
