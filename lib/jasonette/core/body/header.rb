@@ -3,7 +3,7 @@ module Jasonette
     property :style
 
     def menu caption=nil, image_uri=nil
-      item = Jasonette::Item.new(@context) do
+      item = Jasonette::Item.new(context) do
         text caption unless caption.nil?
         image image_uri unless image_uri.nil?
         with_attributes { instance_eval(&::Proc.new) } if block_given?

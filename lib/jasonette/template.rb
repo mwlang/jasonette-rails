@@ -1,13 +1,14 @@
 module Jasonette
+
   class JasonSingleton
     private_class_method :new
 
-    def self.fetch context
+    def self.fetch context, &block
       if (defined?(@@instance) && @@instance)
         return @@instance if !context.nil? && (instance.context == context)
         reset
       end
-      @@instance = Jasonette::Jason.new(context)
+      @@instance = Jasonette::Jason.new(context, &block)
     end
 
     def self.instance
@@ -19,25 +20,32 @@ module Jasonette
     end
   end
 
-  module JbuilderExtensions
+  class Template < Jasonette::Base
     attr_accessor :partial_lookup_options
+    attr_reader :context
+    attr_reader :attributes
 
     def j
       JasonSingleton.fetch(@context)
     end
 
+    def initialize context, &block
+      @context = context
+      @attributes = {}
+      jason &block
+    end
+
     def jason &block
-      builder = JasonSingleton.fetch(@context)
+      builder = JasonSingleton.fetch(context, &block)
 
       if partial_lookup_options
         parent_builder = partial_lookup_options[:handler]
         parent_builder.with_partial_attributes self, &block
       else
         if has_layout?
-          _set_value "$jason_outflow_content", block.source
+          _set_key_value "$jason_outflow_content", block.source
         else
-          builder.with_attributes { instance_eval(&block) }
-          _set_value "$jason", builder.attributes!
+          _set_key_value "$jason", builder.attributes!
         end
       end
       self
@@ -52,7 +60,7 @@ module Jasonette
     def build name, &block
       builder = JasonSingleton.fetch(@context)
       builder.with_attributes { instance_eval(&block) }
-      _set_value name, _scope { builder.attributes! }
+      _set_key_value name, _scope { builder.attributes! }
       self
     end
 
@@ -86,7 +94,7 @@ module Jasonette
 
       builder = Jasonette::Jason::Template.new(@context)
       builder.with_attributes { instance_eval(&block) }
-      _set_value "template", builder.attributes!
+      _set_key_value "template", builder.attributes!
       self
     end
 
@@ -95,10 +103,8 @@ module Jasonette
 
       builder = Jasonette::Jason::Body.new(@context)
       builder.with_attributes { instance_eval(&block) }
-      _set_value "body", builder.attributes!
+      _set_key_value "body", builder.attributes!
       self
     end
   end
-
-  ::Jbuilder.send(:include, JbuilderExtensions)
 end

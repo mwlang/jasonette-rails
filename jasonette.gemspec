@@ -16,9 +16,9 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
-  s.add_dependency "rails", ">= 4.0.0"
-  s.add_dependency "actionview", ">= 4.0.0"
-  s.add_dependency "jbuilder", "~> 2.6.1"
+  s.add_dependency "rails",         ">= 4.0.0"
+  s.add_dependency "multi_json",    "~> 1.2"
+  # s.add_dependency "actionview",    ">= 4.0.0"
 
   s.add_development_dependency "bundler", "~> 1.6"
   s.add_development_dependency "rake"
@@ -30,5 +30,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency "pry-byebug", "~> 3.4.0"
   s.add_development_dependency "json_matchers", "~> 0.7.0"
   s.add_development_dependency "sqlite3"
-  s.add_development_dependency "jbuilder", "~> 2.6.1"
 end

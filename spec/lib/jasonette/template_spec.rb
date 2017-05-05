@@ -1,14 +1,9 @@
+RSpec.describe Jasonette::Template do
+  let(:builder) { build_with(described_class) }
 
-RSpec.describe "jason" do
   context "$jason" do
-
-    # { "$jason": {
-    #   "head": {
-    #     "title": "Foobar"
-    #   }
-    # }
     it "#jason with head and title" do
-      results = jbuild.jason do
+      results = build_with(described_class) do
         head do
           title "Foobar"
         end
@@ -18,7 +13,7 @@ RSpec.describe "jason" do
     end
 
     it "#jason with head and title" do
-      build = jbuild.jason do
+      build = build_with(described_class) do
         head do
           title "Head"
         end
@@ -27,7 +22,7 @@ RSpec.describe "jason" do
     end
 
     it "#jason with head and title" do
-      build = jbuild.jason do
+      build = build_with(described_class) do
         head do
           title "Head"
           foo "bar"
@@ -37,14 +32,14 @@ RSpec.describe "jason" do
     end
 
     it "#jason with head and title" do
-      build = jbuild.jason do
+      build = build_with(described_class) do
         head.title "Head"
       end
       expect(build).to eqj("$jason" => {"head" => {"title" => "Head"}})
     end
 
     it "#jason with head and title" do
-      build = jbuild.jason do
+      build = build_with(described_class) do
         head.title "Head"
         head.foo "bar"
       end
@@ -52,7 +47,7 @@ RSpec.describe "jason" do
     end
 
     it "#jason with head and title" do
-      build = jbuild.jason do
+      build = build_with(described_class) do
         head.title "Head"
         body do
           header.title "Header"
@@ -62,7 +57,7 @@ RSpec.describe "jason" do
     end
 
     it "#jason with head and title" do
-      build = jbuild.jason do
+      build = build_with(described_class) do
         head.title "Head"
         body.header.title "Header"
       end

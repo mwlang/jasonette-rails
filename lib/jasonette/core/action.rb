@@ -6,26 +6,26 @@ module Jasonette
 
     def trigger name, &block
       with_attributes do
-        json.trigger name
+        set! "trigger", name
         instance_eval(&block) if block_given?
       end
     end
 
     def render!
-      with_attributes { json.type "$render" }
+      set! "type", "$render"
     end
 
     def reload!
-      with_attributes { json.type "$reload" }
+      set! "type", "$reload"
     end
 
     def success &block
-      @success = Jasonette::Action.new(@context) do
+      @success = Jasonette::Action.new(context) do
         with_attributes do
           if block_given?
             instance_eval(&block)
           else
-            json.type "$render"
+            render!
           end
         end
       end
@@ -33,10 +33,8 @@ module Jasonette
     end
 
     def error &block
-      @error = Jasonette::Action.new(@context) do
-        with_attributes do
-          instance_eval(&block)
-        end
+      @error = Jasonette::Action.new(context) do
+        with_attributes { instance_eval(&block) }
       end
       self
     end

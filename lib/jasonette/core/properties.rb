@@ -163,7 +163,7 @@ module Jasonette::Properties
       target.send name, *args, &block
     elsif args.one? && args.first.is_a?(Hash)
       target.send name do
-        args.first.each{ |key, value| json.set! key, value.to_s }
+        args.first.each{ |key, value| set! key, value.to_s }
       end
     else
       raise "unhandled definition!"
