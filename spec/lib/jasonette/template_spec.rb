@@ -3,7 +3,7 @@ RSpec.describe Jasonette::Template do
 
   context "$jason" do
     it "#jason with head and title" do
-      results = build_with(described_class) do
+      results = builder.jason do
         head do
           title "Foobar"
         end
@@ -13,7 +13,7 @@ RSpec.describe Jasonette::Template do
     end
 
     it "#jason with head and title" do
-      build = build_with(described_class) do
+      build = builder.jason do
         head do
           title "Head"
         end
@@ -22,7 +22,7 @@ RSpec.describe Jasonette::Template do
     end
 
     it "#jason with head and title" do
-      build = build_with(described_class) do
+      build = builder.jason do
         head do
           title "Head"
           foo "bar"
@@ -32,14 +32,14 @@ RSpec.describe Jasonette::Template do
     end
 
     it "#jason with head and title" do
-      build = build_with(described_class) do
+      build = builder.jason do
         head.title "Head"
       end
       expect(build).to eqj("$jason" => {"head" => {"title" => "Head"}})
     end
 
     it "#jason with head and title" do
-      build = build_with(described_class) do
+      build = builder.jason do
         head.title "Head"
         head.foo "bar"
       end
@@ -47,7 +47,7 @@ RSpec.describe Jasonette::Template do
     end
 
     it "#jason with head and title" do
-      build = build_with(described_class) do
+      build = builder.jason do
         head.title "Head"
         body do
           header.title "Header"
@@ -57,7 +57,7 @@ RSpec.describe Jasonette::Template do
     end
 
     it "#jason with head and title" do
-      build = build_with(described_class) do
+      build = builder.jason do
         head.title "Head"
         body.header.title "Header"
       end

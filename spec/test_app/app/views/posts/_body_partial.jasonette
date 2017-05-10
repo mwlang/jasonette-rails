@@ -1,0 +1,4 @@
+type 'partial'
+items do
+  @posts.each{|p| label p.title }
+end

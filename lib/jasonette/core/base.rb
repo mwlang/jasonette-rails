@@ -1,5 +1,11 @@
 module Jasonette
   class Base
+    class << self
+      attr_accessor :template_lookup_options
+    end
+
+    self.template_lookup_options = { handlers: [:jasonette] }
+
     include Properties
     # include ActionView::Helpers
 
@@ -46,7 +52,7 @@ module Jasonette
       @context = context
       @attributes = {}
 
-      # self.extend ContexEmbedder if @context.present?
+      self.extend ContexEmbedder if @context.present?
       instance_eval(&::Proc.new) if ::Kernel.block_given?
     end
 
@@ -97,24 +103,9 @@ module Jasonette
       self
     end
 
-    # If partial is built as Jbuilder style then partial! is called as example given below.
-    #
-    # Example:
-    #   json.jason do
-    #     partial! "foo/partial", built_as: :json
-    #   end
-    # def partial! name, options = {}
-    #   built_as = options.delete(:built_as)
-    #   if built_as && built_as == :json
-    #     with_attributes { json.partial! name, options }
-    #   else
-    #     JbuilderTemplate.new(context) do |json|
-    #       json.partial_lookup_options = {}
-    #       json.partial_lookup_options[:handler] = self
-    #       json.partial! name, options
-    #     end
-    #   end
-    # end
+    def partial! *args
+      _render_explicit_partial(*args)
+    end
     #
     # def inline! name, *args
     #   j = JbuilderTemplate.new(context) do |json|
@@ -192,11 +183,7 @@ module Jasonette
     def merge! key
       case key
       when ActiveSupport::SafeBuffer
-        # Jasonette::Template.new(context) do |json|
-        #   json.partial_lookup_options = {}
-        #   json.partial_lookup_options[:handler] = self
-        #   json.instance_eval(MultiJson.load(key)["$jason_outflow_content"] || '')
-        # end
+        self.instance_eval(MultiJson.load(key)["$jason_outflow_content"] || '')
       when Hash
         @attributes.merge! key
       when Array
@@ -285,6 +272,39 @@ module Jasonette
 
     def _object_respond_to?(object, *methods)
       methods.all?{ |m| object.respond_to?(m) }
+    end
+
+    def _render_explicit_partial(name_or_options, locals = {})
+      case name_or_options
+        when ::Hash
+          # partial! partial: 'name', foo: 'bar'
+          options = name_or_options
+        else
+          # partial! 'name', locals: {foo: 'bar'}
+          if locals.one? && (locals.keys.first == :locals)
+            options = locals.merge(partial: name_or_options)
+          else
+            options = { partial: name_or_options, locals: locals }
+          end
+          # partial! 'name', foo: 'bar'
+          # TODO : Add feature for option :as and :collection
+          # as = locals.delete(:as)
+          # options[:as] = as if as.present?
+          # options[:collection] = locals[:collection] if locals.key?(:collection)
+      end
+
+      _render_partial_with_options options
+    end
+
+    def _render_partial_with_options(options)
+      options.reverse_merge! locals: {}
+      options.reverse_merge! Jasonette::Base.template_lookup_options
+      _render_partial options
+    end
+
+    def _render_partial(options)
+      options[:locals].merge! _jasonette_handler: self
+      @context.render options
     end
   end
 

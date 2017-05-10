@@ -4,6 +4,7 @@ module Jasonette
     property :footer
     property :sections, :is_many
     property :layers
+    property :style
 
     def attributes!
       super

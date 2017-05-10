@@ -25,5 +25,6 @@ require_relative 'jasonette/jason/head/actions'
 require_relative 'jasonette/jason/head/templates'
 require_relative 'jasonette/jason/body'
 
-# TODO : JUST FOT TEST
 require_relative 'jasonette/template'
+
+require_relative 'jasonette/action_view_extensions'

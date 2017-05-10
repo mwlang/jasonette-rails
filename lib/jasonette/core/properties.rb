@@ -45,6 +45,10 @@ module Jasonette::Properties
     self.class.properties.names
   end
 
+  def property_variables
+    property_names.map { |i| "@#{i}".to_sym }
+  end
+
   TYPES.each do |type|
     define_method("#{type}?") { |name| self.class.properties.has_type?(name, type) }
     define_method("ivar_#{type}_for_property") { |name| "@#{type}_#{name}" }
@@ -99,9 +103,28 @@ module Jasonette::Properties
     klass
   end
 
-  def all_instance_variable_set name, *args
+  def parent_jasonette_set klass
+    instance_variable_set("@_parent_jasonette", klass)
+
+    (klass.instance_variables - klass.property_variables).each do |var|
+      instance_variable_set(var, klass.instance_variable_get(var)) unless instance_variable_get(var)
+    end
+    klass
+  end
+
+  def parent_jasonette
+    instance_variable_get("@_parent_jasonette")
+  end
+
+  def create_new_klass name
     klass = klass_for_property name
     new_klass = klass.new(@context)
+    new_klass.parent_jasonette_set self
+    new_klass
+  end
+
+  def all_instance_variable_set name, *args
+    new_klass = create_new_klass name
 
     set_ivar(name, new_klass) if (get_ivar(name).nil? || is_many?(name))
     ivar = get_ivar(name)

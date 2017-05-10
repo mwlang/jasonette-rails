@@ -1,11 +1,11 @@
 require 'rails/railtie'
-require 'jbuilder/jbuilder_template'
+require 'jasonette/handler'
 
-class Jasonette
+module Jasonette
   class Railtie < ::Rails::Railtie
-    initializer :jason do
+    initializer :jasonette do
       ActiveSupport.on_load :action_view do
-        ActionView::Template.register_template_handler :jason, JasonHandler
+        ActionView::Template.register_template_handler :jasonette, Jasonette::Handler
       end
 
       # if Rails::VERSION::MAJOR >= 5
