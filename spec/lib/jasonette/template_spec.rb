@@ -1,3 +1,5 @@
+require 'jasonette/template'
+
 RSpec.describe Jasonette::Template do
   let(:builder) { build_with(described_class) }
 

@@ -24,7 +24,3 @@ require_relative 'jasonette/jason/head'
 require_relative 'jasonette/jason/head/actions'
 require_relative 'jasonette/jason/head/templates'
 require_relative 'jasonette/jason/body'
-
-require_relative 'jasonette/template'
-
-require_relative 'jasonette/action_view_extensions'

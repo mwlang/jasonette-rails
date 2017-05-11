@@ -1,5 +1,6 @@
 require 'rails/railtie'
 require 'jasonette/handler'
+require 'jasonette/action_view_extensions'
 
 module Jasonette
   class Railtie < ::Rails::Railtie

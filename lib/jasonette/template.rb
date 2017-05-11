@@ -21,31 +21,10 @@ module Jasonette
   end
 
   class Template < Jasonette::Base
-    attr_accessor :partial_lookup_options
-
-    def j
-      JasonSingleton.fetch(context)
-    end
-
-    # TODO : remove
-    # def initialize context
-    #   self.extend ContexEmbedder if @context.present?
-    #   super context
-    # end
 
     def jason &block
       builder = JasonSingleton.fetch(context)
-
-      if partial_lookup_options
-        parent_builder = partial_lookup_options[:handler]
-        parent_builder.with_partial_attributes self, &block
-      else
-        if has_layout?
-          _set_key_value "$jason_outflow_content", block.source
-        else
-          _set_key_value "$jason", builder.encode(&block).attributes!
-        end
-      end
+      _set_key_value "$jason", builder.encode(&block).attributes!
       self
     end
 
@@ -62,6 +41,11 @@ module Jasonette
       _has_layout
     end
 
+    def set_template! template_id
+      template = ObjectSpace._id2ref(template_id)
+      j.instance_variable_set("@_template", template)
+    end
+
     # def inline! name
     #   partial_source = @context.lookup_context.find_file(name, @context.lookup_context.prefixes, true).source
     #   json = self
@@ -74,7 +58,7 @@ module Jasonette
     #   instance_eval source
     #   self
     # end
-
+    #
     # def inline name
     #   builder = JasonSingleton.fetch(@context)
     #   {name => builder.object_id.to_s}.to_json

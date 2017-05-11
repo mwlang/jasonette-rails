@@ -1,13 +1,11 @@
 module Jasonette
   class Base
+    include Properties
+
     class << self
       attr_accessor :template_lookup_options
     end
-
     self.template_lookup_options = { handlers: [:jasonette] }
-
-    include Properties
-    # include ActionView::Helpers
 
     def implicit_set! name, *args, &block
       if property_names.include? name
@@ -56,6 +54,10 @@ module Jasonette
       instance_eval(&::Proc.new) if ::Kernel.block_given?
     end
 
+    def j
+      JasonSingleton.fetch(context)
+    end
+
     def target!
       attributes!.to_json
     end
@@ -88,16 +90,6 @@ module Jasonette
       self
     end
 
-    # def with_partial_attributes pjson, &block
-    #   new_parent_builder = self.class.new(context)
-    #   new_parent_builder.with_attributes { instance_eval(&block) }
-    #   new_parent_builder.attributes!.each do |k, v|
-    #     with_attributes do
-    #       set! k, (@attributes[k] ? @attributes[k].merge(v) : v)
-    #     end
-    #   end
-    # end
-
     def inline json
       @attributes.merge! JSON.parse(json)
       self
@@ -106,14 +98,6 @@ module Jasonette
     def partial! *args
       _render_explicit_partial(*args)
     end
-    #
-    # def inline! name, *args
-    #   j = JbuilderTemplate.new(context) do |json|
-    #     json.partial! name, *args
-    #   end
-    #   @attributes.merge! j.attributes!
-    #   self
-    # end
 
     def attributes!
       merge_properties
@@ -183,7 +167,11 @@ module Jasonette
     def merge! key
       case key
       when ActiveSupport::SafeBuffer
-        self.instance_eval(MultiJson.load(key)["$jason_outflow_content"] || '')
+        if template = j.instance_variable_get("@_template")
+          options = {}
+          options.merge! template: template.virtual_path
+          _render_partial_with_options options
+        end
       when Hash
         @attributes.merge! key
       when Array
@@ -304,7 +292,7 @@ module Jasonette
 
     def _render_partial(options)
       options[:locals].merge! _jasonette_handler: self
-      @context.render options
+      context.render options
     end
   end
 

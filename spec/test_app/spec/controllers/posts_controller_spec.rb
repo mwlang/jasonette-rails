@@ -61,24 +61,7 @@ describe PostsController do
 
       expect(JSON.parse(response.body)).to eq action_partial_json
     end
-
-    # it "render a list of posts" do
-    #   request.accept = "application/json"
-    #   get :inline, format: :json
-    #   expect(JSON.parse(response.body)).to eq({"$jason"=>{"body"=>{"sections"=>[{"type"=>"inline", "items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]}]}}})
-    # end
   end
-
-  # describe "mix rendering" do
-  #   it "render a list of posts" do
-  #     request.accept = "application/json"
-  #     get :mixing, format: :json
-  #     expect(JSON.parse(response.body)).to eq({"$jason"=>{"body"=>{"sections"=>[
-  #       {"type"=>"partial", "items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]},
-  #       {"type"=>"inline", "items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]}
-  #     ]}}})
-  #   end
-  # end
 
   context "render" do
     describe "without layout" do

@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
-  before_action :set_posts, only: [:index, :partial, :inline, :mixing]
+  before_action :set_posts, only: [:index, :partial]
 
   def with_layout
     render file: "posts/without_layout", layout: "jason"
