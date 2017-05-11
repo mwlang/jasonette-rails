@@ -1,1 +1,4 @@
 set! "foo", "in template"
+if new_post_var.present?
+  template_local_var new_post_var
+end

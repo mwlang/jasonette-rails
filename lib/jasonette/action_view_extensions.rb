@@ -5,6 +5,7 @@ module Jasonette
       path, locals  = options[:layout], options[:locals] || {}
       layout        = path && find_layout(path, locals.keys, [formats.first])
       JasonSingleton.fetch(context).instance_variable_set("@_has_layout", !layout.try(:virtual_path).nil?)
+      JasonSingleton.fetch(context).instance_variable_set("@_template_locals", locals)
       super
     end
   end

@@ -3,17 +3,7 @@ RSpec.describe Jasonette::Jason::Body do
   let(:builder) { build_with(described_class) }
 
   it "builds" do
-    results = builder.encode do
-      head.title "Foobar"
-    end
-    expect(results).to eqj({"title" => "Foobar"})
-  end
-
-  it "finds Foo" do
-    results = builder.encode do
-      foo.title "Foobar"
-    end
-    expect(results).to eqj({"title" => "Foobar"})
+    expect { builder.encode { head.title "Foobar" } }.to raise_error NoMethodError
   end
 
   it "uses Header class for header property" do

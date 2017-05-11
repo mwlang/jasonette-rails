@@ -37,7 +37,7 @@ module Jasonette
           begin
             return context_method(name, *args, &block)
           rescue
-            set! name, *args
+            set! name, *args if args.present?
           end
         end
       end
@@ -168,7 +168,8 @@ module Jasonette
       case key
       when ActiveSupport::SafeBuffer
         if template = j.instance_variable_get("@_template")
-          options = {}
+          locals = j.instance_variable_get("@_template_locals") || {}
+          options = { locals: locals }
           options.merge! template: template.virtual_path
           _render_partial_with_options options
         end
