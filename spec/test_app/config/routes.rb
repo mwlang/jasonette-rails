@@ -2,8 +2,6 @@ Rails.application.routes.draw do
   resources :posts do
     collection do
       get "partial"
-      get "inline"
-      get "mixing"
       get "helper"
       get "action_partial"
       get "action_in_partial"

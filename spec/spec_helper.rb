@@ -2,14 +2,9 @@ require 'rspec'
 require 'rspec/its'
 
 require "bundler/setup"
-require "active_support"
-require 'action_controller'
-require 'action_controller/base'
-
 require 'rails/all'
-require 'jbuilder'
 
-require_relative '../lib/jasonette'
+require 'jasonette'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

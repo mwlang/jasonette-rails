@@ -8,7 +8,7 @@ describe PostsController do
 
   describe "single file rendering" do
     it "loads jBuilder" do
-      expect(ActionView::Template::Handlers.extensions).to eq [:raw, :erb, :html, :builder, :ruby, :jbuilder]
+      expect(ActionView::Template::Handlers.extensions).to eq [:raw, :erb, :html, :builder, :ruby, :jasonette]
     end
 
     it "render a list of posts" do
@@ -61,27 +61,10 @@ describe PostsController do
 
       expect(JSON.parse(response.body)).to eq action_partial_json
     end
-
-    it "render a list of posts" do
-      request.accept = "application/json"
-      get :inline, format: :json
-      expect(JSON.parse(response.body)).to eq({"$jason"=>{"body"=>{"sections"=>[{"type"=>"inline", "items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]}]}}})
-    end
-  end
-
-  describe "mix rendering" do
-    it "render a list of posts" do
-      request.accept = "application/json"
-      get :mixing, format: :json
-      expect(JSON.parse(response.body)).to eq({"$jason"=>{"body"=>{"sections"=>[
-        {"type"=>"partial", "items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]},
-        {"type"=>"inline", "items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]}
-      ]}}})
-    end
   end
 
   context "render" do
-    describe "with layout" do
+    describe "without layout" do
       it "builds only template" do
         request.accept = "application/json"
         get :without_layout, format: :json
@@ -93,12 +76,12 @@ describe PostsController do
       it "builds layout and template" do
         request.accept = "application/json"
         get :with_layout, format: :json
-        expect(JSON.parse(response.body)).to eq("$jason" => {"head"=>{"foo"=>"in template"}})
+        expect(JSON.parse(response.body)).to eq("$jason" => {"head"=>{"layout_local_var"=>"new_post", "foo"=>"in template", "template_local_var"=>"new_post"}})
       end
 
       it "builds template with local template variables" do
         request.accept = "application/json"
-        get :with_template_vars, format: :json, template_vars: ["foo", "bar"]
+        get :with_template_vars, format: :json, params: { template_vars: ["foo", "bar"] }
         expect(JSON.parse(response.body)).to eq("$jason"=>{"head"=>{"foo"=>"in template", "template_var_foo"=>"foo", "template_var_bar"=>"bar", "template_var_baz"=>"baz"}})
       end
     end

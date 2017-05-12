@@ -1,0 +1,6 @@
+body do
+  sections do
+    partial! "body_partial"
+  end
+end
+partial! "foo"

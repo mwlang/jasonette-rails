@@ -17,24 +17,6 @@ RSpec.describe Jasonette::Base do
     end
   end
 
-  context "$jason" do
-
-    # { "$jason": {
-    #   "head": {
-    #     "title": "Foobar"
-    #   }
-    # }
-    it "#jason with head and title" do
-      build = jbuild.jason do
-        head do
-          title "Foobar"
-          foo "bar"
-        end
-      end
-      expect(build).to eqj("$jason" => {"head" => {"title" => "Foobar", "foo" => "bar"}})
-    end
-  end
-
   context "opening act" do
     it "any missing method opens named block" do
       build = builder.match do
@@ -47,19 +29,19 @@ RSpec.describe Jasonette::Base do
 
   context "#_method" do
     it "build in method with name" do
-      build = jbuild.jason do
+      build = builder.encode do
         _method "Foo"
       end
-      expect(build.attributes!).to eqj("$jason" => {"method" => "Foo"})
+      expect(build.attributes!).to eqj("method" => "Foo")
     end
 
     it "build in method with block" do
-      build = jbuild.jason do
+      build = builder.encode do
         _method do
           item "Foo"
         end
       end
-      expect(build.attributes!).to eqj("$jason" => {"method" => {"item" => "Foo"}})
+      expect(build.attributes!).to eqj("method" => {"item" => "Foo"})
     end
   end
 
@@ -84,38 +66,6 @@ RSpec.describe Jasonette::Base do
   it "generates expected json" do
     pending "get inline! working in test environment -- works in Rails app!"
     expect(builder.inline!("score")).to match_response_schema("zero_scores")
-  end
-
-  context "readme example" do
-    describe "data blocks" do
-      it "generates expected json" do
-        build = jbuild.jason do
-          head do
-            title "Beatles"
-            data.names ["John", "George", "Paul", "Ringo"]
-            data.songs [
-              { album: "My Bonnie", song: "My Bonnie" },
-              { album: "My Bonnie", song: "Skinny Minnie" },
-              { album: "Please Please Me", song: "I Saw Her Standing There" },
-            ]
-          end
-        end
-        expect(build.attributes!).to match_response_schema("readme_examples/data_blocks")
-      end
-    end
-
-    describe "style blocks using hashes" do
-      it "generates expected json" do
-        build = jbuild.jason do
-          head do
-            title "Foobar"
-            style "styled_row", font: "HelveticaNeue", size: 20, color: "#FFFFFF", padding: 10
-            style "col", font: "RobotoBold", color: "#FF0055"
-          end
-        end
-        expect(build.attributes!).to match_response_schema("readme_examples/style_blocks")
-      end
-    end
   end
 
   it "set key/values that are not easily expressed as method" do

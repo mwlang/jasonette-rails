@@ -1,0 +1,6 @@
+head do
+  if new_post_var.present?
+    layout_local_var new_post_var
+  end
+  merge! yield
+end
