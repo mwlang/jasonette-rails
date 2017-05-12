@@ -3,12 +3,12 @@ module Jasonette
   class JasonSingleton
     private_class_method :new
 
-    def self.fetch context, &block
+    def self.fetch context
       if (defined?(@@instance) && @@instance)
         return @@instance if !context.nil? && (instance.context == context)
         reset
       end
-      @@instance = Jasonette::Jason.new(context)
+      @@instance = Jasonette::Template.new(context)
     end
 
     def self.instance
@@ -21,29 +21,36 @@ module Jasonette
   end
 
   class Template < Jasonette::Base
+    attr_accessor :layout, :locals
 
-    def jason &block
-      builder = JasonSingleton.fetch(context)
-      _set_key_value "$jason", builder.encode(&block).attributes!
+    def self.load context
+      JasonSingleton.fetch context
+    end
+
+    def jason name=nil, &block
+      builder = Jasonette::Jason.new(context, &block)
+      _set_key_value name || "$jason", builder.attributes!
       self
     end
+    alias build jason
 
-    def build name, &block
-      builder = JasonSingleton.fetch(@context)
-      builder.with_attributes { instance_eval(&block) }
-      _set_key_value name, _scope { builder.attributes! }
-      self
+    def has_layout? template_id
+      template = get_view_template(template_id)
+      layout_path && layout_path != template.virtual_path
     end
 
-    def has_layout?
-      _has_layout = j.instance_variable_get("@_has_layout") || false
-      j.instance_variable_set("@_has_layout", false)
-      _has_layout
+    def layout_path
+      layout && layout.try(:virtual_path)
     end
 
-    def set_template! template_id
-      template = ObjectSpace._id2ref(template_id)
-      j.instance_variable_set("@_template", template)
+    def get_view_template template_id
+      ObjectSpace._id2ref(template_id.to_i)
+    end
+
+    def new_jason template_id
+      new_jason = self.class.new context
+      new_jason.set! "_template", "#{template_id}"
+      new_jason
     end
 
     # def inline! name

@@ -54,10 +54,6 @@ module Jasonette
       instance_eval(&::Proc.new) if ::Kernel.block_given?
     end
 
-    def j
-      JasonSingleton.fetch(context)
-    end
-
     def target!
       attributes!.to_json
     end
@@ -164,13 +160,17 @@ module Jasonette
       end
     end
 
+    # TODO : Make Base independent from Template. Its only used in `merge!`
+    def j
+      JasonSingleton.fetch(context)
+    end
+
     def merge! key
       case key
       when ActiveSupport::SafeBuffer
-        if template = j.instance_variable_get("@_template")
-          locals = j.instance_variable_get("@_template_locals") || {}
-          options = { locals: locals }
-          options.merge! template: template.virtual_path
+        values = ::MultiJson.load(key) || {}
+        if template = j.get_view_template(values["_template"])
+          options = { locals: j.locals, template: template.virtual_path }
           _render_partial_with_options options
         end
       when Hash
