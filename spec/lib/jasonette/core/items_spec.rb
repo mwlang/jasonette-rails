@@ -269,6 +269,39 @@ RSpec.describe Jasonette::Items do
         "items" => [{"type"=>"textarea", "name"=>"status", "value"=>"fooing...", "placeholder"=>"Status update"}]
       })
     end
+    context "button" do
+      it "builds a button with caption" do
+        build = build_with(described_class) do
+          button "Click me"
+        end
+
+        expect(build).to eqj "items" => [{"type"=>"button", "text"=>"Click me"}]
+      end
+
+      it "builds a button with url" do
+        build = build_with(described_class) do
+          button "image_url", true
+        end
+
+        expect(build).to eqj "items" => [{"type"=>"button", "url"=>"image_url"}]
+      end
+    end
+
+    it "builds a slider" do
+      build = build_with(described_class) do
+        slider "gauge", "2"
+      end
+
+      expect(build).to eqj "items" => [{"type"=>"slider", "name"=>"gauge", "value"=>"2"}]
+    end
+
+    it "builds a merge!" do
+      build = build_with(described_class) do
+        merge! "add" => "2"
+      end
+
+      expect(build).to eqj "items" => [{"add"=>"2"}]
+    end
 
     context "#skip_type" do
       it "simple text" do

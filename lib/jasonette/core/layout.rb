@@ -1,8 +1,10 @@
 module Jasonette
-  class Layout < Jasonette::Base
+  class Layout < Jasonette::Item
+    super_property
     property :components
 
     def attributes!
+      super
       @attributes.merge components.attributes!
     end
   end
