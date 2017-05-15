@@ -1,5 +1,3 @@
-require 'jasonette/template'
-
 module Jasonette
   class Handler
     cattr_accessor :default_format

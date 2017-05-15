@@ -55,7 +55,7 @@ module Jasonette
     end
 
     def target!
-      attributes!.to_json
+      ::MultiJson.dump attributes!
     end
 
     def encode
