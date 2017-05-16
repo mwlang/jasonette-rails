@@ -24,3 +24,16 @@ require_relative 'jasonette/jason/head'
 require_relative 'jasonette/jason/head/actions'
 require_relative 'jasonette/jason/head/templates'
 require_relative 'jasonette/jason/body'
+
+require_relative 'jasonette/template'
+
+module Jasonette
+  def self.setup
+    yield self
+  end
+
+  # :dump_options, :load_options
+  def self.multi_json
+    yield ::MultiJson
+  end
+end

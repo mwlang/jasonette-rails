@@ -39,6 +39,33 @@ module Jasonette
       append item
     end
 
+    def button caption=nil, is_url=false, skip_type=false
+      item = Jasonette::Item.new(context) do
+        type "button" unless skip_type
+        unless caption.nil?
+          is_url ? (url caption) : (text caption)
+        end
+
+        with_attributes do
+          instance_eval(&::Proc.new) if block_given?
+        end
+      end
+      append item
+    end
+
+    def slider name, value=nil, skip_type=false
+      item = Jasonette::Item.new(context) do
+        type "slider" unless skip_type
+        name name
+        value value unless value.nil?
+
+        with_attributes do
+          instance_eval(&::Proc.new) if block_given?
+        end
+      end
+      append item
+    end
+
     def layout orientation="vertical"
       item = Jasonette::Layout.new(context) do
         type orientation
@@ -72,6 +99,16 @@ module Jasonette
         type "space" unless skip_type
         height height unless height.nil?
         with_attributes { instance_eval(&::Proc.new) } if block_given?
+      end
+      append item
+    end
+
+    def merge! items
+      item = Jasonette::Item.new(context) do
+        with_attributes do
+          items.each { |k, v| set! k, v }
+          instance_eval(&::Proc.new) if block_given?
+        end
       end
       append item
     end
