@@ -187,9 +187,7 @@ RSpec.describe Jasonette::Components do
               "options" => {
                 "url" => "https://url/submit",
                 "method" => "POST",
-                "data" => [
-                  { "id" => "12", "name" => "Samule" }
-                ]
+                "data" => { "id" => "12", "name" => "Samule" }
               }
             }
           }

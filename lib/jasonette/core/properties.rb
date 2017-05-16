@@ -81,10 +81,6 @@ module Jasonette::Properties
     instance_variable_get(ivar_for_property(name))
   end
 
-  def get_default_for_property name
-    is_many?(name) ? [] : {}
-  end
-
   def prop name
     instance_variable_get("@#{name}")
   end
@@ -148,6 +144,14 @@ module Jasonette::Properties
     ivar = property_get! name, *args
     return ivar unless block_given?
     ivar.tap { |v| v.encode(&block) }
+  end
+
+  def get_default_for_property name
+    is_many_ivars = get_is_many_ivar(name)
+
+    single_default = is_single?(name) && is_many_ivars.to_a.length <= 1 ? {} : nil
+    many_default = is_many?(name) ? [] : nil
+    single_default || many_default || {}
   end
 
   def merge_properties

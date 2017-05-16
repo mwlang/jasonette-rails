@@ -2,6 +2,15 @@ RSpec.describe Jasonette::Options do
 
   let(:builder) { build_with(described_class) }
 
+  it "builds data as a single pair of key/value" do
+    results = builder.encode do
+      data do
+        name "Foo"
+      end
+    end
+    expect(results).to eqj "data" => {"name" => "Foo"}
+  end
+
   it "builds data as an array" do
     results = builder.encode do
       data do
