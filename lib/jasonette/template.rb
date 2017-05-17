@@ -29,7 +29,7 @@ module Jasonette
 
     def jason name=nil, &block
       builder = Jasonette::Jason.new(context, &block)
-      _set_key_value name || "$jason", builder.attributes!
+      set! name || "$jason", builder.attributes!
       self
     end
     alias build jason
@@ -83,7 +83,7 @@ module Jasonette
     #
     #   builder = Jasonette::Jason::Template.new(@context)
     #   builder.with_attributes { instance_eval(&block) }
-    #   _set_key_value "template", builder.attributes!
+    #   set! "template", builder.attributes!
     #   self
     # end
     #
@@ -92,7 +92,7 @@ module Jasonette
     #
     #   builder = Jasonette::Jason::Body.new(@context)
     #   builder.with_attributes { instance_eval(&block) }
-    #   _set_key_value "body", builder.attributes!
+    #   set! "body", builder.attributes!
     #   self
     # end
   end
