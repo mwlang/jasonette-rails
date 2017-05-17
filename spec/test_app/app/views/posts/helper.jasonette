@@ -7,4 +7,8 @@ head do
       "_with_block"
     end)
   end
+
+  style :post_foo do
+    color "white"
+  end
 end
