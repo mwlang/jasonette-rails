@@ -66,19 +66,5 @@ RSpec.describe Jasonette::Base do
   it "generates expected json" do
     pending "get inline! working in test environment -- works in Rails app!"
     expect(builder.inline!("score")).to match_response_schema("zero_scores")
-  end
-
-  it "set key/values that are not easily expressed as method" do
-    build = builder.encode do
-      set! "color:disabled", "1100"
-    end
-    expect(build).to eqj "color:disabled"=>"1100"
-  end
-
-  it "#merge!" do
-    build = builder.encode do
-      merge! "title" => "foo", "color" => "1100"
-    end
-    expect(build).to eqj "title"=>"foo", "color"=>"1100"
-  end
+  end  
 end

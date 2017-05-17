@@ -112,16 +112,16 @@ module Jasonette
           _merge_block(key){ yield self }
         end
       elsif args.empty?
-        if Jasonette === value
+        if _is_collection?(value) || Jasonette::Base === value
           # person another_jasonette
           # { "person": { ...  } }
-          value.attributes!
-        elsif _is_collection?(value) && !(::Hash === value)
-          # comments @post.comments [ { content: "...", created_at: "..." } ]
+          # comments [ { content: "...", created_at: "..." } ]
           # { "comments": [ { "content": "hello", "created_at": "..." } ] }
-          _scope{ array! value }
+          # comments { content: "...", created_at: "..." }
+          # { "comments": [ { "content": "hello", "created_at": "..." } ] }
+          _scope{ merge! value }
         else
-          value
+          _key(value)
         end
       elsif _is_collection?(value)
         # comments @post.comments, :content, :created_at
@@ -173,11 +173,14 @@ module Jasonette
           options = { locals: j.locals, template: template.virtual_path }
           _render_partial_with_options options
         end
+      when Jasonette::Base
+        merge! key.attributes! 
       when Hash
-        @attributes.merge! key
+        key.each{ |key, value| set! _key(key), value }
       when Array
-        @attributes = key
+        _set_value key
       end
+      @attributes
     end
 
     private
@@ -256,7 +259,7 @@ module Jasonette
     end
 
     def _blank?(value=@attributes)
-      value.nil?
+      value.nil? ? true : value.blank?
     end
 
     def _object_respond_to?(object, *methods)
