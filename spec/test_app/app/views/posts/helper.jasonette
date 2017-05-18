@@ -11,4 +11,9 @@ head do
   style :post_foo do
     color "white"
   end
+
+  merge! private_posts(["post"])
+  merge! public_posts(["post"])
+
+  merge! add_jason_builder_posts
 end

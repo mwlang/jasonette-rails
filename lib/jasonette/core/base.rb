@@ -143,10 +143,8 @@ module Jasonette
         []
       elsif ::Kernel.block_given?
         _map_collection(collection, &::Proc.new)
-      elsif attributes.any?
-        _map_collection(collection) { |element| extract! element, *attributes }
       else
-        collection.to_a
+        _map_collection(collection) { |element| extract! element, *attributes }
       end
 
       merge! array
@@ -155,6 +153,8 @@ module Jasonette
     def extract!(object, *attributes)
       if ::Hash === object
         _extract_hash_values(object, attributes)
+      elsif Jasonette::Base === object
+        _extract_hash_values(object.attributes!, attributes)
       else
         _extract_method_values(object, attributes)
       end
@@ -186,7 +186,7 @@ module Jasonette
     private
 
     def context_method name, *args, &block
-      context.send(name, *args, &block)
+      context.public_send(name, *args, &block)
     end
 
     def _extract_hash_values(object, attributes)

@@ -89,94 +89,21 @@ RSpec.describe Jasonette::Properties do
 
   describe "Method" do
     let(:builder) { build_with(Jasonette::Base) }
-    describe "#set!" do
-      it "build key/values that are not easily expressed as method" do
-        build = builder.encode do
-          set! "color:disabled", "1100"
-        end
-        expect(build).to eqj "color:disabled"=>"1100"
-      end
-
-      it "build any simple value as string" do
-        build = builder.encode do
-          set! "color", 1
-        end
-        expect(build).to eqj "color"=>"1"
-      end
-
-      context "with Jasonette instance" do
-        it "build instance attributrs!" do
-          _builder = build_with(Jasonette::Jason).encode do
-            color "1100"
-          end
-          build = builder.encode do
-            set! "head", _builder
-          end
-          expect(build).to eqj "head" => {"color"=>"1100"}
+    
+    describe "#property_sender" do
+      context "with block" do
+        it "build target with block values" do
+          target = build_with(Jasonette::Jason::Head) 
+          builder.property_sender target, "color", &Proc.new { builder.instance_eval { padding "1" } }
+          expect(target).to eqj "color" => {"padding"=>"1"}
         end
       end
 
-      context "with Block" do
-        it "build its content" do
-          build = builder.encode do
-            set! "color" do
-              white "000000"
-              black "fffff"
-            end  
-          end
-          expect(build).to eqj "color" => {"white"=>"000000", "black"=>"fffff"}
-        end
-
-        context "having argument as collection" do  
-          it "build its content with Array values" do
-            build = builder.encode do
-              set! "color", [{ encode: "000000", name: "white" }, { encode: "fffff", name: "black" }] do |color|
-                set! color[:name], color[:encode]
-              end  
-            end
-            expect(build).to eqj "color" => [{"white"=>"000000"}, {"black"=>"fffff"}]
-          end
-
-          it "build its content with Hash values" do
-            build = builder.encode do
-              set! "color", { "white"=>"000000", "black"=>"fffff" } do |color_name, encode|
-                set! color_name, encode
-              end  
-            end
-            expect(build).to eqj "color" => [{"white"=>"000000"}, {"black"=>"fffff"}]
-          end
-        end
-      end
-
-      context "without Block" do
-        it "build collection" do
-          build = builder.encode do
-            set! "color", [{ encode: "000000", name: "white" }, { encode: "fffff", name: "black" }], :encode, :name
-          end
-          expect(build).to eqj "color" => [{"encode"=>"000000", "name"=>"white"}, {"encode"=>"fffff", "name"=>"black"}]
-        end
-      end  
-    end 
-
-    describe "#merge!" do
-      context "with hash having symbolised key, integer value" do
-        it "build hash key/value in string" do
-          build = builder.encode do
-            merge! title: "foo", "color" => "1100", file: 1 
-          end
-          expect(build).to eqj "title"=>"foo", "color"=>"1100", "file"=>"1"
-        end
-      end
-
-      context "with Jasonette instance" do
-        it "build attributrs" do
-          _builder = build_with(Jasonette::Jason).encode do
-            color "1100"
-          end
-          build = builder.encode do
-            merge! _builder
-          end
-          expect(build).to eqj "color"=>"1100"
+      context "with arguments" do
+        it "build target with argument" do
+          target = build_with(Jasonette::Jason::Head) 
+          builder.property_sender target, "color", {"padding"=>"2"}
+          expect(target).to eqj "color" => {"padding"=>"2"}
         end
       end
     end
