@@ -108,4 +108,26 @@ describe PostsController do
       end  
     end  
   end
+
+  describe "#as_json use" do
+    context "without defination of as_json" do
+      it "build wrong target!" do
+        pending "Find a way to undefine and redefine :as_json method"
+        # class Jasonette::Base; remove_method(:as_json); end
+        # class Jasonette::Base; redefine_method(:as_json); end
+
+        request.accept = "application/json"
+        get :as_json, format: :json
+        expect(JSON.parse(response.body)["$jason"]).to include "private_posts"=>["post"], "public_helper_posts"=>["post"]
+      end
+    end
+
+    context "with defination of as_json" do
+      it "build target!" do
+        request.accept = "application/json"
+        get :as_json, format: :json
+        expect(JSON.parse(response.body)["$jason"]).to include "head" => {"as_json"=>[{"actions"=>{"test"=>{"success"=>{"type"=>"$render"}}}}]}
+      end
+    end
+  end
 end

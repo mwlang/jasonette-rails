@@ -54,6 +54,14 @@ module Jasonette
       instance_eval(&::Proc.new) if ::Kernel.block_given?
     end
 
+    # Fixed for below error : 
+    # IOError - not opened for reading:
+    # activesupport (5.0.1) lib/active_support/core_ext/object/json.rb:130:in `as_json'
+    # Eventually called by multi_json/adapter.rb:25:in `dump'
+    def as_json(options = nil)
+      attributes!
+    end
+
     def target!
       ::MultiJson.dump attributes!
     end

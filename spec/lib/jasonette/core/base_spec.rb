@@ -174,4 +174,34 @@ RSpec.describe Jasonette::Base do
       end
     end
   end
+
+  describe "#as_json use" do
+    context "without defination of as_json" do
+      it "build wrong target!" do
+        pending "Find a way to undefine and redefine :as_json method"
+        _builder = build_with(Jasonette::Jason).encode do
+          color "1100"
+        end
+        _builder.instance_eval('undef :as_json')
+
+        build = builder.encode do
+          set! "style", [_builder]
+        end
+        expect(build.target!).to eq "color"=>"1100"
+      end
+    end
+
+    context "with defination of as_json" do
+      it "build target!" do
+        _builder = build_with(Jasonette::Jason).encode do
+          color "1100"
+        end
+
+        build = builder.encode do
+          set! "style", [_builder]
+        end
+        expect(build.target!).to eq "{\"style\":[{\"color\":\"1100\"}]}"
+      end
+    end
+  end
 end

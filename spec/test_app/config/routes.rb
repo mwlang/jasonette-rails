@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       get "with_layout"
       get "without_layout"
       get "with_template_vars"
+      get "as_json"
     end
   end
 
