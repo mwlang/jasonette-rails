@@ -110,15 +110,9 @@ describe PostsController do
   end
 
   describe "#as_json use" do
-    context "without defination of as_json" do
+    context "without defination of as_json", shared_context: :remove_as_json do
       it "build wrong target!" do
-        pending "Find a way to undefine and redefine :as_json method"
-        # class Jasonette::Base; remove_method(:as_json); end
-        # class Jasonette::Base; redefine_method(:as_json); end
-
-        request.accept = "application/json"
-        get :as_json, format: :json
-        expect(JSON.parse(response.body)["$jason"]).to include "private_posts"=>["post"], "public_helper_posts"=>["post"]
+        expect { get :as_json, format: :json }.to raise_error ActionView::Template::Error, "not opened for reading"
       end
     end
 

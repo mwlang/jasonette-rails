@@ -164,9 +164,7 @@ RSpec.describe Jasonette::Base do
 
     context "with Jasonette instance" do
       it "build attributes" do
-        _builder = build_with(Jasonette::Jason).encode do
-          color "1100"
-        end
+        _builder = build_with(Jasonette::Jason) { color "1100" }
         build = builder.encode do
           merge! _builder
         end
@@ -176,31 +174,23 @@ RSpec.describe Jasonette::Base do
   end
 
   describe "#as_json use" do
-    context "without defination of as_json" do
+    context "without defination of as_json", shared_context: :remove_as_json do
       it "build wrong target!" do
-        pending "Find a way to undefine and redefine :as_json method"
-        _builder = build_with(Jasonette::Jason).encode do
-          color "1100"
-        end
-        _builder.instance_eval('undef :as_json')
-
+        _builder = build_with(Jasonette::Jason) { color "1100" }
         build = builder.encode do
           set! "style", [_builder]
         end
-        expect(build.target!).to eq "color"=>"1100"
+        expect(JSON.parse(build.target!)["style"].first).to_not include "color"
       end
     end
 
     context "with defination of as_json" do
       it "build target!" do
-        _builder = build_with(Jasonette::Jason).encode do
-          color "1100"
-        end
-
+        _builder = build_with(Jasonette::Jason) { color "1100" }
         build = builder.encode do
           set! "style", [_builder]
         end
-        expect(build.target!).to eq "{\"style\":[{\"color\":\"1100\"}]}"
+        expect(JSON.parse(build.target!)).to eq "style" => [{"color"=>"1100"}]
       end
     end
   end
