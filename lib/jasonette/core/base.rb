@@ -14,7 +14,7 @@ module Jasonette
         begin
           return context_method(name, *args, &block)
         rescue
-          set!(name) { instance_eval(&block) }
+          set!(name) { encode(&block) }
         end
       end
     end
@@ -51,7 +51,7 @@ module Jasonette
       @attributes = {}
 
       self.extend ContexEmbedder if @context.present?
-      instance_eval(&::Proc.new) if ::Kernel.block_given?
+      encode(&::Proc.new) if ::Kernel.block_given?
     end
 
     # Fixed for below error : 

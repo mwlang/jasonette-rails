@@ -7,7 +7,7 @@ module Jasonette
     def trigger name, &block
       with_attributes do
         set! "trigger", name
-        instance_eval(&block) if block_given?
+        encode(&block) if block_given?
       end
     end
 
@@ -21,21 +21,13 @@ module Jasonette
 
     def success &block
       @success = Jasonette::Action.new(context) do
-        with_attributes do
-          if block_given?
-            instance_eval(&block)
-          else
-            render!
-          end
-        end
+        block_given? ? encode(&block) : render!
       end
       self
     end
 
     def error &block
-      @error = Jasonette::Action.new(context) do
-        with_attributes { instance_eval(&block) }
-      end
+      @error = Jasonette::Action.new(context, &block)
       self
     end
   end

@@ -5,7 +5,7 @@ module Jasonette
       item = Jasonette::Item.new(context) do
         text caption unless caption.nil?
         type "label" unless skip_type
-        with_attributes { instance_eval(&::Proc.new) } if block_given?
+        encode(&::Proc.new) if block_given?
       end
       append item
     end
@@ -14,7 +14,7 @@ module Jasonette
       item = Jasonette::Item.new(context) do
         text caption unless caption.nil?
         type "text" unless skip_type
-        with_attributes { instance_eval(&::Proc.new) } if block_given?
+        encode(&::Proc.new) if block_given?
       end
       append item
     end
@@ -23,7 +23,7 @@ module Jasonette
       item = Jasonette::Item.new(context) do
         type "video" unless skip_type
         file_url uri unless uri.nil?
-        with_attributes { instance_eval(&::Proc.new) } if block_given?
+        encode(&::Proc.new) if block_given?
       end
       append item
     end
@@ -31,10 +31,8 @@ module Jasonette
     def image uri=nil, skip_type=false, url_key="url"
       item = Jasonette::Item.new(context) do
         type "image" unless skip_type
-        with_attributes do
-          set! url_key, uri unless uri.nil?
-          instance_eval(&::Proc.new) if block_given?
-        end
+        set! url_key, uri unless uri.nil?
+        encode(&::Proc.new) if block_given?
       end
       append item
     end
@@ -45,10 +43,7 @@ module Jasonette
         unless caption.nil?
           is_url ? (url caption) : (text caption)
         end
-
-        with_attributes do
-          instance_eval(&::Proc.new) if block_given?
-        end
+        encode(&::Proc.new) if block_given?
       end
       append item
     end
@@ -58,10 +53,7 @@ module Jasonette
         type "slider" unless skip_type
         name name
         value value unless value.nil?
-
-        with_attributes do
-          instance_eval(&::Proc.new) if block_given?
-        end
+        encode(&::Proc.new) if block_given?
       end
       append item
     end
@@ -69,7 +61,7 @@ module Jasonette
     def layout orientation="vertical"
       item = Jasonette::Layout.new(context) do
         type orientation
-        with_attributes { instance_eval(&::Proc.new) } if block_given?
+        encode(&::Proc.new) if block_given?
       end
       append item
     end
@@ -79,7 +71,7 @@ module Jasonette
         type "textfield" unless skip_type
         name name unless name.nil?
         value value unless value.nil?
-        with_attributes { instance_eval(&::Proc.new) } if block_given?
+        encode(&::Proc.new) if block_given?
       end
       append item
     end
@@ -89,7 +81,7 @@ module Jasonette
         type "textarea" unless skip_type
         name name unless name.nil?
         value value unless value.nil?
-        with_attributes { instance_eval(&::Proc.new) } if block_given?
+        encode(&::Proc.new) if block_given?
       end
       append item
     end
@@ -98,17 +90,15 @@ module Jasonette
       item = Jasonette::Item.new(context) do
         type "space" unless skip_type
         height height unless height.nil?
-        with_attributes { instance_eval(&::Proc.new) } if block_given?
+        encode(&::Proc.new) if block_given?
       end
       append item
     end
 
     def merge! items
       item = Jasonette::Item.new(context) do
-        with_attributes do
-          items.each { |k, v| set! k, v }
-          instance_eval(&::Proc.new) if block_given?
-        end
+        items.each { |k, v| set! k, v }
+        encode(&::Proc.new) if block_given?
       end
       append item
     end

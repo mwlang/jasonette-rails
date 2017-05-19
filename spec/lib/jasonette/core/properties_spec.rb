@@ -94,7 +94,7 @@ RSpec.describe Jasonette::Properties do
       context "with block" do
         it "build target with block values" do
           target = build_with(Jasonette::Jason::Head) 
-          builder.property_sender target, "color", &Proc.new { builder.instance_eval { padding "1" } }
+          builder.property_sender target, "color", &Proc.new { builder.encode { padding "1" } }
           expect(target).to eqj "color" => {"padding"=>"1"}
         end
       end
