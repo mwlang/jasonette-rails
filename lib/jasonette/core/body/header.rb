@@ -6,7 +6,7 @@ module Jasonette
       item = Jasonette::Item.new(context) do
         text caption unless caption.nil?
         image image_uri unless image_uri.nil?
-        with_attributes { instance_eval(&::Proc.new) } if block_given?
+        encode(&::Proc.new) if block_given?
       end
       append item, "menu"
     end

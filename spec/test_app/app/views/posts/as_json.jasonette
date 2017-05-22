@@ -1,0 +1,3 @@
+head do
+  set! "as_json", [add_jason_builder_posts]
+end

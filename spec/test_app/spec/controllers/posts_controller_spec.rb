@@ -23,12 +23,6 @@ describe PostsController do
       expect(JSON.parse(response.body)).to eq({"$jason"=>{"body"=>{"sections"=>[{"type"=>"partial", "items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]}]}, "foo"=>"bar"}})
     end
 
-    it "can call helper methods and build style block without calling helper" do
-      request.accept = "application/json"
-      get :helper, format: :json
-      expect(JSON.parse(response.body)).to eq({"$jason"=>{"head"=>{"styles"=>{"post_foo"=>{"color"=>"white"}},"data"=>{"foo"=>"foo", "app_foo"=>"app_foo", "post_foo"=>"post_foo", "block_foo"=>"app_foo_with_block"}}}})
-    end
-
     let(:action_partial_json) do
       { "$jason" => {
           "head" => {
@@ -63,8 +57,8 @@ describe PostsController do
     end
   end
 
-  context "render" do
-    describe "without layout" do
+  describe "render" do
+    context "without layout" do
       it "builds only template" do
         request.accept = "application/json"
         get :without_layout, format: :json
@@ -72,7 +66,7 @@ describe PostsController do
       end
     end
 
-    describe "with layout" do
+    context "with layout" do
       it "builds layout and template" do
         request.accept = "application/json"
         get :with_layout, format: :json
@@ -83,6 +77,50 @@ describe PostsController do
         request.accept = "application/json"
         get :with_template_vars, format: :json, params: { template_vars: ["foo", "bar"] }
         expect(JSON.parse(response.body)).to eq("$jason"=>{"head"=>{"foo"=>"in template", "template_var_foo"=>"foo", "template_var_bar"=>"bar", "template_var_baz"=>"baz"}})
+      end
+    end
+  end
+
+  describe "calling helpers" do
+    it "builds helper" do
+      request.accept = "application/json"
+      get :helper, format: :json
+      expect(JSON.parse(response.body)["$jason"]["head"]).to include "data"=>{"foo"=>"foo", "app_foo"=>"app_foo", "post_foo"=>"post_foo", "block_foo"=>"app_foo_with_block"}
+    end
+
+    it "builds without calling helper" do
+      request.accept = "application/json"
+      get :helper, format: :json
+      expect(JSON.parse(response.body)["$jason"]["head"]).to include "styles"=>{"post_foo"=>{"color"=>"white"}}
+    end
+
+    it "builds only public helper" do
+      request.accept = "application/json"
+      get :helper, format: :json
+      expect(JSON.parse(response.body)["$jason"]["head"]).to include "private_posts"=>["post"], "public_helper_posts"=>["post"]
+    end
+
+    context "have jason_builder" do
+      it "builds builder attributes" do
+        request.accept = "application/json"
+        get :helper, format: :json
+        expect(JSON.parse(response.body)["$jason"]["head"]).to include "actions" => {"test"=>{"success"=>{"type"=>"$render"}}}
+      end  
+    end  
+  end
+
+  describe "#as_json use" do
+    context "without defination of as_json", shared_context: :remove_as_json do
+      it "build wrong target!" do
+        expect { get :as_json, format: :json }.to raise_error ActionView::Template::Error, "not opened for reading"
+      end
+    end
+
+    context "with defination of as_json" do
+      it "build target!" do
+        request.accept = "application/json"
+        get :as_json, format: :json
+        expect(JSON.parse(response.body)["$jason"]).to include "head" => {"as_json"=>[{"actions"=>{"test"=>{"success"=>{"type"=>"$render"}}}}]}
       end
     end
   end

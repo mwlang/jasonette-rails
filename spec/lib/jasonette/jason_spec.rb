@@ -1,6 +1,6 @@
 RSpec.describe Jasonette::Jason do
 
-  let(:builder) { build_with(Jasonette::Jason) }
+  let(:builder) { build_with(described_class) }
 
   require 'pry'
 

@@ -6,7 +6,7 @@ module Jasonette
     def badge caption=nil
       item = self.class.new(context) do
         text caption unless caption.nil?
-        instance_eval(&::Proc.new) if block_given?
+        encode(&::Proc.new) if block_given?
       end
       append item, "badge"
     end

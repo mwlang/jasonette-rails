@@ -14,7 +14,7 @@ module Jasonette
         begin
           return context_method(name, *args, &block)
         rescue
-          set!(name) { instance_eval(&block) }
+          set!(name) { encode(&block) }
         end
       end
     end
@@ -51,7 +51,15 @@ module Jasonette
       @attributes = {}
 
       self.extend ContexEmbedder if @context.present?
-      instance_eval(&::Proc.new) if ::Kernel.block_given?
+      encode(&::Proc.new) if ::Kernel.block_given?
+    end
+
+    # Fixed for below error : 
+    # IOError - not opened for reading:
+    # activesupport (5.0.1) lib/active_support/core_ext/object/json.rb:130:in `as_json'
+    # Eventually called by multi_json/adapter.rb:25:in `dump'
+    def as_json(options = nil)
+      attributes!
     end
 
     def target!
@@ -143,10 +151,8 @@ module Jasonette
         []
       elsif ::Kernel.block_given?
         _map_collection(collection, &::Proc.new)
-      elsif attributes.any?
-        _map_collection(collection) { |element| extract! element, *attributes }
       else
-        collection.to_a
+        _map_collection(collection) { |element| extract! element, *attributes }
       end
 
       merge! array
@@ -155,6 +161,8 @@ module Jasonette
     def extract!(object, *attributes)
       if ::Hash === object
         _extract_hash_values(object, attributes)
+      elsif Jasonette::Base === object
+        _extract_hash_values(object.attributes!, attributes)
       else
         _extract_method_values(object, attributes)
       end
@@ -186,7 +194,7 @@ module Jasonette
     private
 
     def context_method name, *args, &block
-      context.send(name, *args, &block)
+      context.public_send(name, *args, &block)
     end
 
     def _extract_hash_values(object, attributes)
