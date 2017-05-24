@@ -295,12 +295,25 @@ RSpec.describe Jasonette::Items do
       expect(build).to eqj "items" => [{"type"=>"slider", "name"=>"gauge", "value"=>"2"}]
     end
 
-    it "builds a merge!" do
-      build = build_with(described_class) do
-        merge! "add" => "2"
+    context "#merge!" do
+      it "builds hash" do
+        build = build_with(described_class) do
+          merge! "add" => "2", "minus" => "1"
+          merge! "add" => "0"
+        end
+
+        expect(build).to eqj "items" => [{"add"=>"2", "minus"=>"1"}, {"add"=>"0"}]
       end
 
-      expect(build).to eqj "items" => [{"add"=>"2"}]
+      it "builds components" do
+        build2 = build_with(described_class).text "Check out Live DEMO", true
+
+        build = build_with(described_class) do
+          merge! build2
+        end
+
+        expect(build).to eqj "items" => [{"text"=>"Check out Live DEMO"}]
+      end
     end
 
     context "#skip_type" do
