@@ -97,7 +97,7 @@ module Jasonette
 
     def merge! items
       item = Jasonette::Item.new(context) do
-        items.each { |k, v| set! k, v }
+        merge! items
         encode(&::Proc.new) if block_given?
       end
       append item
