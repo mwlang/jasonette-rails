@@ -106,8 +106,9 @@ module Jasonette
     private
 
     def append builder
-      @attributes["items"] ||= []
-      @attributes["items"] << builder.attributes!
+      @attributes = [] if @attributes.empty?
+      raise "HashError : You may have used `set!` before" if ::Hash === @attributes
+      @attributes << builder.attributes!
       builder
     end
   

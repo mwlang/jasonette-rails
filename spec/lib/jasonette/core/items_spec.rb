@@ -6,7 +6,7 @@ RSpec.describe Jasonette::Items do
         label "Check out Live DEMO"
       end
 
-      expect(build.attributes!).to eq({ "items"=>[ { "type"=>"label", "text"=>"Check out Live DEMO", }] })
+      expect(build).to eqj [{"type"=>"label", "text"=>"Check out Live DEMO"}]
     end
 
     it "builds a simple label" do
@@ -19,18 +19,16 @@ RSpec.describe Jasonette::Items do
         end
       end
 
-      expect(build.attributes!).to eq({
-        "items"=>[
-          {
-            "type"=>"label",
-            "text"=>"Check out Live DEMO",
-            "href"=>{
-              "url"=>"file://demo.json",
-              "fresh"=>"true"
-            }
+      expect(build.attributes!).to eq([
+        {
+          "type"=>"label",
+          "text"=>"Check out Live DEMO",
+          "href"=>{
+            "url"=>"file://demo.json",
+            "fresh"=>"true"
           }
-        ]
-      })
+        }
+      ])
     end
 
     it "builds multiple labels" do
@@ -48,28 +46,26 @@ RSpec.describe Jasonette::Items do
         label "three"
       end
 
-      expect(build.attributes!).to eq({
-        "items"=>[
-          {
-            "type"=>"label",
-            "text"=>"one",
-            "href"=>{
-              "url"=>"file://demo.json",
-            }
-          },
-          {
-            "type"=>"label",
-            "text"=>"two",
-            "href"=>{
-              "url"=>"file://login.json",
-            }
-          },
-          {
-            "type"=>"label",
-            "text"=>"three",
-          },
-        ]
-      })
+      expect(build.attributes!).to eq([
+        {
+          "type"=>"label",
+          "text"=>"one",
+          "href"=>{
+            "url"=>"file://demo.json",
+          }
+        },
+        {
+          "type"=>"label",
+          "text"=>"two",
+          "href"=>{
+            "url"=>"file://login.json",
+          }
+        },
+        {
+          "type"=>"label",
+          "text"=>"three",
+        },
+        ])
     end
 
     it "builds a label with klass" do
@@ -79,15 +75,13 @@ RSpec.describe Jasonette::Items do
         end
       end
 
-      expect(build.attributes!).to eq({
-        "items"=>[
-          {
-            "type"=>"label",
-            "text"=>"klass",
-            "class"=> "fancy_label",
-          }
-        ]
-      })
+      expect(build.attributes!).to eq([
+        {
+          "type"=>"label",
+          "text"=>"klass",
+          "class"=> "fancy_label",
+        }
+      ])
     end
 
     it "builds a label with css_class" do
@@ -97,15 +91,13 @@ RSpec.describe Jasonette::Items do
         end
       end
 
-      expect(build.attributes!).to eq({
-        "items"=>[
-          {
-            "type"=>"label",
-            "text"=>"css_class",
-            "class"=> "fancy_label",
-          }
-        ]
-      })
+      expect(build.attributes!).to eq([
+        {
+          "type"=>"label",
+          "text"=>"css_class",
+          "class"=> "fancy_label",
+        }
+      ])
     end
 
     it "builds a fancy label" do
@@ -126,25 +118,23 @@ RSpec.describe Jasonette::Items do
           end
         end
       end
-      expect(build.attributes!).to eq({
-        "items"=>[
-          {
-            "type"=>"label",
-            "text"=>"Check out Live DEMO",
-            "style"=>{
-              "align"=>"right",
-              "padding"=>"10",
-              "color"=> "#000000",
-              "font"=>"HelveticaNeue",
-              "size"=>"12"
-            },
-            "href"=>{
-              "url"=>"file://demo.json",
-              "fresh"=>"true"
-            }
+      expect(build.attributes!).to eq([
+        {
+          "type"=>"label",
+          "text"=>"Check out Live DEMO",
+          "style"=>{
+            "align"=>"right",
+            "padding"=>"10",
+            "color"=> "#000000",
+            "font"=>"HelveticaNeue",
+            "size"=>"12"
+          },
+          "href"=>{
+            "url"=>"file://demo.json",
+            "fresh"=>"true"
           }
-        ]
-      })
+        }
+      ])
     end
 
     it "builds an action on label" do
@@ -170,8 +160,8 @@ RSpec.describe Jasonette::Items do
           end
         end
       end
-      expect(build).to eqj({
-        "items"=>[{
+      expect(build).to eqj([
+        {
           "type"=>"label",
           "text"=>"Check out Live DEMO",
           "action" => {
@@ -183,8 +173,8 @@ RSpec.describe Jasonette::Items do
               "options" => { "title" => "Error", "description" => "Something went wrong." }
             }
           }
-        }]
-      })
+        }
+      ])
     end
 
     it "builds an action trigger with data on label" do
@@ -208,8 +198,8 @@ RSpec.describe Jasonette::Items do
           end
         end
       end
-      expect(build).to eqj({
-        "items"=>[{
+      expect(build).to eqj([
+        {
           "type"=>"label",
           "text"=>"Check out Live DEMO",
           "action" => {
@@ -222,8 +212,8 @@ RSpec.describe Jasonette::Items do
               "data" => { "id" => "12", "name" => "Samule" }
             }
           }
-        }]
-      })
+        }
+      ])
     end
 
     it "builds a simple text" do
@@ -231,9 +221,7 @@ RSpec.describe Jasonette::Items do
         text "Check out Live DEMO"
       end
 
-      expect(build).to eqj({
-        "items"=>[{"text"=>"Check out Live DEMO", "type"=>"text"}]
-      })
+      expect(build).to eqj([{"text"=>"Check out Live DEMO", "type"=>"text"}])
     end
 
     it "builds a simple video" do
@@ -241,9 +229,7 @@ RSpec.describe Jasonette::Items do
         video "file://demo.json"
       end
 
-      expect(build).to eqj({
-        "items"=>[{"type"=>"video","file_url"=>"file://demo.json"}]
-      })
+      expect(build).to eqj([{"type"=>"video","file_url"=>"file://demo.json"}])
     end
 
     it "builds a textfield" do
@@ -253,9 +239,7 @@ RSpec.describe Jasonette::Items do
         end
       end
 
-      expect(build).to eqj({
-        "items" => [{"type"=>"textfield", "name"=>"password", "value"=>"foo1234", "placeholder"=>"Password..."}]
-      })
+      expect(build).to eqj([{"type"=>"textfield", "name"=>"password", "value"=>"foo1234", "placeholder"=>"Password..."}])
     end
 
     it "builds a textarea" do
@@ -265,9 +249,7 @@ RSpec.describe Jasonette::Items do
         end
       end
 
-      expect(build).to eqj({
-        "items" => [{"type"=>"textarea", "name"=>"status", "value"=>"fooing...", "placeholder"=>"Status update"}]
-      })
+      expect(build).to eqj([{"type"=>"textarea", "name"=>"status", "value"=>"fooing...", "placeholder"=>"Status update"}])
     end
     context "button" do
       it "builds a button with caption" do
@@ -275,7 +257,7 @@ RSpec.describe Jasonette::Items do
           button "Click me"
         end
 
-        expect(build).to eqj "items" => [{"type"=>"button", "text"=>"Click me"}]
+        expect(build).to eqj [{"type"=>"button", "text"=>"Click me"}]
       end
 
       it "builds a button with url" do
@@ -283,7 +265,7 @@ RSpec.describe Jasonette::Items do
           button "image_url", true
         end
 
-        expect(build).to eqj "items" => [{"type"=>"button", "url"=>"image_url"}]
+        expect(build).to eqj [{"type"=>"button", "url"=>"image_url"}]
       end
     end
 
@@ -292,7 +274,7 @@ RSpec.describe Jasonette::Items do
         slider "gauge", "2"
       end
 
-      expect(build).to eqj "items" => [{"type"=>"slider", "name"=>"gauge", "value"=>"2"}]
+      expect(build).to eqj [{"type"=>"slider", "name"=>"gauge", "value"=>"2"}]
     end
 
     context "#merge!" do
@@ -302,7 +284,7 @@ RSpec.describe Jasonette::Items do
           merge! "add" => "0"
         end
 
-        expect(build).to eqj "items" => [{"add"=>"2", "minus"=>"1"}, {"add"=>"0"}]
+        expect(build).to eqj [{"add"=>"2", "minus"=>"1"}, {"add"=>"0"}]
       end
 
       it "builds components" do
@@ -312,7 +294,28 @@ RSpec.describe Jasonette::Items do
           merge! build2
         end
 
-        expect(build).to eqj "items" => [{"text"=>"Check out Live DEMO"}]
+        expect(build).to eqj [{"text"=>"Check out Live DEMO"}]
+      end
+    end
+
+    context "#set!" do
+      it "builds block with key" do
+        build = build_with(described_class) do
+          set! "#each colors" do
+            merge! "add" => "0"
+          end
+        end
+
+        expect(build).to eqj "#each colors" => [{"add"=>"0"}]
+      end
+
+      it "raise HashError" do
+        expect { build_with(described_class) do
+          set! "#each colors" do
+            merge! "add" => "0"
+          end
+          merge! "add" => "0"
+        end }.to raise_error RuntimeError, "HashError : You may have used `set!` before"
       end
     end
 
@@ -322,7 +325,7 @@ RSpec.describe Jasonette::Items do
           text "Check out Live DEMO", true
         end
 
-        expect(build).to eqj({"items"=>[{"text"=>"Check out Live DEMO"}]})
+        expect(build).to eqj [{"text"=>"Check out Live DEMO"}]
       end
     end
   end

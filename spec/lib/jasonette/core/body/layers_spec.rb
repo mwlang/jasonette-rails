@@ -12,10 +12,10 @@ RSpec.describe Jasonette::Body::Layers do
         label "two"
       end
 
-      expect(build).to eqj("layers"=>[
+      expect(build).to eqj [
         {"text"=>"one", "type"=>"label", "style"=>{"top"=>"100", "left"=>"50%-25"}},
-        {"text"=>"two", "type"=>"label"
-      }])
+        {"text"=>"two", "type"=>"label"}
+      ]
     end
   end
 end

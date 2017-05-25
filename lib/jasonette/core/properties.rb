@@ -1,5 +1,6 @@
 module Jasonette::Properties
   TYPES = [:is_many, :is_single]
+  DEFAULT_IS_ARRAY = [:items, :components, :layers]
 
   class PropertyEnum
     include Enumerable
@@ -29,6 +30,7 @@ module Jasonette::Properties
     end
 
     def property name, *types
+      types << :is_many if DEFAULT_IS_ARRAY.include?(name)
       properties.merge! "#{name}".to_sym => TYPES.map { |type| { type => types.include?(type) } }.reduce({}, :merge)
     end
 
@@ -168,15 +170,18 @@ module Jasonette::Properties
 
       if is_many?(property_name)
         get_is_many_ivar(property_name).each do |iv|
+          ivar_attributes = iv.attributes!
           if is_single?(property_name) && (single_ivar = iv.get_is_single_ivar(property_name))
-            @attributes[property_name] = @attributes[property_name].reduce({}, :merge) if @attributes[property_name].is_a?(Array)
+            @attributes[property_name] = @attributes[property_name].reduce({}, :merge) if ::Array === @attributes[property_name]
             @attributes[property_name][single_ivar] ||= {}
-            @attributes[property_name][single_ivar].merge! iv.attributes!
+            @attributes[property_name][single_ivar].merge! ivar_attributes
           else
-            if @attributes[property_name].is_a?(Hash)
-              @attributes[property_name].merge! iv.attributes!
+            if ::Hash === @attributes[property_name]
+              @attributes[property_name].merge! ivar_attributes
+            elsif DEFAULT_IS_ARRAY.map(&:to_s).include?(property_name) && ::Array === ivar_attributes
+              @attributes[property_name] += ivar_attributes
             else
-              @attributes[property_name] << iv.attributes!
+              @attributes[property_name] << ivar_attributes
             end
           end
         end

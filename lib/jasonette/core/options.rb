@@ -4,5 +4,6 @@ module Jasonette
     property :action
     property :form, :is_many
     property :items
+    property :options
   end
 end
