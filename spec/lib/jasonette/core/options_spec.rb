@@ -67,4 +67,16 @@ RSpec.describe Jasonette::Options do
       "interval" => "1", "name" => "timer1", "action" => {"type"=>"$render", "success"=>{"type"=>"$render"}, "error"=>{"type"=>"render"}}
     })
   end
+
+  it "builds options for $lambda action" do
+    results = builder.encode do
+      name "lambda.timer"
+      options do
+        form do
+          name "Bar"
+        end
+      end
+    end
+    expect(results).to eqj "name" => "lambda.timer", "options" => {"form" => [{"name" => "Bar"}]}
+  end
 end
