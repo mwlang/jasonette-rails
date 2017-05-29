@@ -2,21 +2,30 @@ module Jasonette
 
   class JasonSingleton
     private_class_method :new
+    @@instances = []
 
     def self.fetch context
-      if (defined?(@@instance) && @@instance)
-        return @@instance if !context.nil? && (instance.context == context)
-        reset
+      if instance = find(context)
+        instance
+      else
+        instance = Jasonette::Template.new(context)
+        @@instances << instance
+        instance
       end
-      @@instance = Jasonette::Template.new(context)
     end
 
-    def self.instance
-      @@instance
+    def self.find context
+      @@instances.select { |instance| instance.context == context }.first
     end
 
-    def self.reset
-      @@instance = nil
+    def self.reset context
+      if instance = find(context)
+        instances.delete_if { |i| i == instance }
+      end
+    end
+
+    def self.instances
+      @@instances
     end
   end
 
@@ -30,6 +39,7 @@ module Jasonette
     def jason name=nil, &block
       builder = Jasonette::Jason.new(context, &block)
       set! name || "$jason", builder.attributes!
+      JasonSingleton.reset context
       self
     end
     alias build jason
@@ -52,48 +62,5 @@ module Jasonette
       new_jason.set! "_template", "#{template_id}"
       new_jason
     end
-
-    # def inline! name
-    #   partial_source = @context.lookup_context.find_file(name, @context.lookup_context.prefixes, true).source
-    #   json = self
-    #   source = <<-RUBY
-    #     json.jason do
-    #       instance_eval(partial_source)
-    #     end
-    #   RUBY
-    #
-    #   instance_eval source
-    #   self
-    # end
-    #
-    # def inline name
-    #   builder = JasonSingleton.fetch(@context)
-    #   {name => builder.object_id.to_s}.to_json
-    # end
-    #
-    # def head &block
-    #   builder = Jasonette::Jason::Head.new(@context)
-    #   builder.with_attributes { instance_eval(&block) }
-    #   set! "head", builder.attributes!
-    #   self
-    # end
-    #
-    # def template &block
-    #   puts '@' * 40, 'template'
-    #
-    #   builder = Jasonette::Jason::Template.new(@context)
-    #   builder.with_attributes { instance_eval(&block) }
-    #   set! "template", builder.attributes!
-    #   self
-    # end
-    #
-    # def body &block
-    #   puts '@' * 40, 'body'
-    #
-    #   builder = Jasonette::Jason::Body.new(@context)
-    #   builder.with_attributes { instance_eval(&block) }
-    #   set! "body", builder.attributes!
-    #   self
-    # end
   end
 end
