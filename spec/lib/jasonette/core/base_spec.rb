@@ -194,4 +194,16 @@ RSpec.describe Jasonette::Base do
       end
     end
   end
+
+  describe "#encode" do
+    context "with private method" do
+      it do
+        pending "instance_eval is responcible to anounce private methods to object"
+        build = builder.encode do
+          _set_key_value "style", "wow"
+        end
+        expect(build).to_not eqj "style"=>"wow"
+      end
+    end
+  end
 end

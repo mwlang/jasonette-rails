@@ -67,6 +67,51 @@ describe PostsController do
     end
 
     context "with layout" do
+      describe "to have requests in multi threaded" do
+        let(:thr1) do
+          Thread.new do
+            Thread.current[:sleepee] = true
+            get :with_layout, format: :json
+          end
+        end
+
+        let(:thr2) do
+          Thread.new do
+            st = true
+            while st do
+              thr1.status == "run" ? sleep(0.1) : (st = false)
+            end
+            Thread.current[:sleepee] = false
+            get :with_layout, format: :json
+          end
+        end
+
+        context "with changed shared resource(`JasonSingleton instances`) in between threads" do
+          it "raise error" do
+            thr2.join
+
+            expect do
+              if thr1.status == "sleep"
+                Jasonette::JasonSingleton.class_variable_set('@@instances', [])
+                thr1.wakeup; thr1.join
+              end
+            end.to raise_error StandardError
+          end
+        end
+
+        context "without changed shared resource(`JasonSingleton instances`) in between threads" do
+          it "not raise error" do
+            thr2.join
+
+            expect do
+              if thr1.status == "sleep"
+                thr1.wakeup; thr1.join
+              end
+            end.not_to raise_error
+          end
+        end
+      end
+
       it "builds layout and template" do
         request.accept = "application/json"
         get :with_layout, format: :json

@@ -2,5 +2,10 @@ head do
   if new_post_var.present?
     layout_local_var new_post_var
   end
+
+  if Thread.current[:sleepee]
+    Thread.stop
+  end
+
   merge! yield
 end
