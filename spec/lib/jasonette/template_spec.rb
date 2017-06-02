@@ -11,7 +11,7 @@ RSpec.describe Jasonette::Template do
         end
       end
 
-      expect(results).to eqj "{\"$jason\":{\"head\":{\"title\":\"Foobar\"}}}"
+      expect(results.target!).to eq "{\"$jason\":{\"head\":{\"title\":\"Foobar\"}}}"
     end
 
     it "#jason with head and title" do
@@ -20,7 +20,7 @@ RSpec.describe Jasonette::Template do
           title "Head"
         end
       end
-      expect(build).to eqj("$jason" => {"head" => {"title" => "Head"}})
+      expect(JSON.parse(build.target!)).to eq "$jason" => {"head" => {"title" => "Head"}}
     end
 
     it "#jason with head and title" do
@@ -30,14 +30,14 @@ RSpec.describe Jasonette::Template do
           foo "bar"
         end
       end
-      expect(build).to eqj("$jason" => {"head" => {"title" => "Head", "foo" => "bar"}})
+      expect(JSON.parse(build.target!)).to eq "$jason" => {"head" => {"title" => "Head", "foo" => "bar"}}
     end
 
     it "#jason with head and title" do
       build = builder.jason do
         head.title "Head"
       end
-      expect(build).to eqj("$jason" => {"head" => {"title" => "Head"}})
+      expect(JSON.parse(build.target!)).to eq "$jason" => {"head" => {"title" => "Head"}}
     end
 
     it "#jason with head and title" do
@@ -45,7 +45,7 @@ RSpec.describe Jasonette::Template do
         head.title "Head"
         head.foo "bar"
       end
-      expect(build).to eqj("$jason" => {"head" => {"title" => "Head", "foo" => "bar"}})
+      expect(JSON.parse(build.target!)).to eq "$jason" => {"head" => {"title" => "Head", "foo" => "bar"}}
     end
 
     it "#jason with head and title" do
@@ -55,7 +55,7 @@ RSpec.describe Jasonette::Template do
           header.title "Header"
         end
       end
-      expect(build).to eqj("$jason" => {"head" => {"title" => "Head"}, "body" => {"header" => {"title" => "Header"}}})
+      expect(JSON.parse(build.target!)).to eq "$jason" => {"head" => {"title" => "Head"}, "body" => {"header" => {"title" => "Header"}}}
     end
 
     it "#jason with head and title" do
@@ -63,7 +63,7 @@ RSpec.describe Jasonette::Template do
         head.title "Head"
         body.header.title "Header"
       end
-      expect(build).to eqj("$jason" => {"head" => {"title" => "Head"}, "body" => {"header" => {"title" => "Header"}}})
+      expect(JSON.parse(build.target!)).to eq "$jason" => {"head" => {"title" => "Head"}, "body" => {"header" => {"title" => "Header"}}}
     end
 
     it "#jason with head and title" do
@@ -73,7 +73,7 @@ RSpec.describe Jasonette::Template do
           foo "bar"
         end
       end
-      expect(build).to eqj("$jason" => {"head" => {"title" => "Foobar", "foo" => "bar"}})
+      expect(JSON.parse(build.target!)).to eq "$jason" => {"head" => {"title" => "Foobar", "foo" => "bar"}}
     end
 
     context "readme example" do
@@ -90,7 +90,7 @@ RSpec.describe Jasonette::Template do
               ]
             end
           end
-          expect(build.attributes!).to match_response_schema("readme_examples/data_blocks")
+          expect(JSON.parse(build.target!)).to match_response_schema("readme_examples/data_blocks")
         end
       end
 
@@ -103,7 +103,7 @@ RSpec.describe Jasonette::Template do
               style "col", font: "RobotoBold", color: "#FF0055"
             end
           end
-          expect(build.attributes!).to match_response_schema("readme_examples/style_blocks")
+          expect(JSON.parse(build.target!)).to match_response_schema("readme_examples/style_blocks")
         end
       end
     end
@@ -117,7 +117,36 @@ RSpec.describe Jasonette::Template do
         end
       end
 
-      expect(results).to eqj "{\"$$jason\":{\"head\":{\"title\":\"Foobar\"}}}"
+      expect(results.target!).to eq "{\"$$jason\":{\"head\":{\"title\":\"Foobar\"}}}"
+    end
+  end
+
+  context "#image_url" do
+    it "can use actionview asset helpers" do
+      build = builder.image_url("foo.png")
+      expect(build).to eq "/images/foo.png"
+    end
+  end
+
+  describe "#as_json use" do
+    context "without defination of as_json", shared_context: :remove_as_json do
+      it "build wrong target!" do
+        _builder = build_with(Jasonette::Jason) { color "1100" }
+        build = jbuild do
+          set! "style", [_builder]
+        end
+        expect(JSON.parse(build.target!)["$jason"]["style"].first).to_not include "color"
+      end
+    end
+
+    context "with defination of as_json" do
+      it "build target!" do
+        _builder = build_with(Jasonette::Jason) { color "1100" }
+        build = jbuild do
+          set! "style", [_builder]
+        end
+        expect(JSON.parse(build.target!)["$jason"]).to eq "style" => [{"color"=>"1100"}]
+      end
     end
   end
 end

@@ -17,3 +17,11 @@ head do
 
   merge! add_jason_builder_posts
 end
+
+body do
+  sections do
+    items do
+      merge! space_builder "10", params[:has_block]
+    end
+  end
+end

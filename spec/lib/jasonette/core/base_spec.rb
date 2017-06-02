@@ -2,13 +2,6 @@ RSpec.describe Jasonette::Base do
 
   let(:builder) { build_with(described_class) }
 
-  context "#image_url" do
-    it "can use actionview asset helpers" do
-      build = builder.image_url("foo.png")
-      expect(build).to eq "/images/foo.png"
-    end
-  end
-
   context "partial!" do
     it "loads partials" do
       pending "it works within Rails app!  Why not here?"
@@ -173,24 +166,14 @@ RSpec.describe Jasonette::Base do
     end
   end
 
-  describe "#as_json use" do
-    context "without defination of as_json", shared_context: :remove_as_json do
-      it "build wrong target!" do
-        _builder = build_with(Jasonette::Jason) { color "1100" }
+  describe "#encode" do
+    context "with private method" do
+      it do
+        pending "instance_eval is responcible to anounce private methods to object"
         build = builder.encode do
-          set! "style", [_builder]
+          _set_key_value "style", "wow"
         end
-        expect(JSON.parse(build.target!)["style"].first).to_not include "color"
-      end
-    end
-
-    context "with defination of as_json" do
-      it "build target!" do
-        _builder = build_with(Jasonette::Jason) { color "1100" }
-        build = builder.encode do
-          set! "style", [_builder]
-        end
-        expect(JSON.parse(build.target!)).to eq "style" => [{"color"=>"1100"}]
+        expect(build).to_not eqj "style"=>"wow"
       end
     end
   end
