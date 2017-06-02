@@ -8,9 +8,7 @@ module Jasonette
 
     def template name, *args, &block
       if block_given?
-        item = Jasonette::Body.new(context) do
-          encode(&block)
-        end
+        item = Jasonette::Body.new(context, &block)
         append item, "templates", name
       else
         property_sender templates, name, *args
@@ -28,9 +26,7 @@ module Jasonette
 
     def action name, *args, &block
       if block_given?
-        item = Jasonette::Action.new(context) do
-          encode(&block)
-        end
+        item = Jasonette::Action.new(context, &block)
         append item, "actions", name
       else
         property_sender actions, name, *args

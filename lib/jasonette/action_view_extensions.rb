@@ -5,8 +5,8 @@ module Jasonette
       path, locals  = options[:layout], options[:locals] || {}
       layout        = path && find_layout(path, locals.keys, [formats.first])
       if !layout.try(:virtual_path).nil?
-        JasonSingleton.fetch(context).layout = layout
-        JasonSingleton.fetch(context).locals = locals
+        JasonSingleton.fetch(context).__layout = layout
+        JasonSingleton.fetch(context).__locals = locals
       end
       super
     end

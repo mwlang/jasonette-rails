@@ -25,8 +25,6 @@ require_relative 'jasonette/jason/head/actions'
 require_relative 'jasonette/jason/head/templates'
 require_relative 'jasonette/jason/body'
 
-require_relative 'jasonette/template'
-
 module Jasonette
   def self.setup
     yield self

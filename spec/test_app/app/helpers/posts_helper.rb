@@ -11,6 +11,14 @@ module PostsHelper
     end
   end 
 
+  def space_builder height, has_block
+    if has_block && eval(has_block)
+      jason_builder(:items).space height, &Proc.new { partial! "posts/foo" }
+    else
+      jason_builder(:items).space height
+    end
+  end
+
   def public_posts val
     { "public_helper_posts" => val }
   end

@@ -2,20 +2,11 @@ module Jasonette
   class Base
     include Properties
 
-    class << self
-      attr_accessor :template_lookup_options
-    end
-    self.template_lookup_options = { handlers: [:jasonette] }
-
     def implicit_set! name, *args, &block
       if property_names.include? name
         with_attributes { property_set! name, *args, &block }
       else
-        begin
-          return context_method(name, *args, &block)
-        rescue
-          set!(name) { encode(&block) }
-        end
+        set!(name) { encode(&block) }
       end
     end
 
@@ -34,11 +25,7 @@ module Jasonette
         if property_names.include? name
           return property_get! name
         else
-          begin
-            return context_method(name, *args, &block)
-          rescue
-            set! name, *args if args.present?
-          end
+          set! name, *args if args.present?
         end
       end
     end
@@ -50,11 +37,10 @@ module Jasonette
       @context = context
       @attributes = {}
 
-      self.extend ContexEmbedder if @context.present?
       encode(&::Proc.new) if ::Kernel.block_given?
     end
 
-    # Fixed for below error : 
+    # Fixed for below error :
     # IOError - not opened for reading:
     # activesupport (5.0.1) lib/active_support/core_ext/object/json.rb:130:in `as_json'
     # Eventually called by multi_json/adapter.rb:25:in `dump'
@@ -62,12 +48,13 @@ module Jasonette
       attributes!
     end
 
-    def target!
-      ::MultiJson.dump attributes!
-    end
-
     def encode
-      instance_eval(&::Proc.new)
+      binding = eval "self", ::Proc.new.binding
+      if (binding.method(:encode).parameters.first.include?(:req) rescue false)
+        binding.encode(self, &::Proc.new)
+      else
+        instance_eval(&::Proc.new)
+      end
       self
     end
 
@@ -97,10 +84,6 @@ module Jasonette
     def inline json
       @attributes.merge! JSON.parse(json)
       self
-    end
-
-    def partial! *args
-      _render_explicit_partial(*args)
     end
 
     def attributes!
@@ -146,19 +129,19 @@ module Jasonette
     end
 
 
-    def array!(collection = [], *attributes)
+    def array! collection = [], *args
       array = if collection.nil?
         []
       elsif ::Kernel.block_given?
         _map_collection(collection, &::Proc.new)
       else
-        _map_collection(collection) { |element| extract! element, *attributes }
+        _map_collection(collection) { |element| extract! element, *args }
       end
 
       merge! array
     end
 
-    def extract!(object, *attributes)
+    def extract! object, *attributes
       if ::Hash === object
         _extract_hash_values(object, attributes)
       elsif Jasonette::Base === object
@@ -168,19 +151,8 @@ module Jasonette
       end
     end
 
-    # TODO : Make Base independent from Template. Its only used in `merge!`
-    def j
-      JasonSingleton.fetch(context)
-    end
-
     def merge! key
       case key
-      when ActiveSupport::SafeBuffer
-        values = ::MultiJson.load(key) || {}
-        if template = j.get_view_template(values["_template"])
-          options = { locals: j.locals, template: template.virtual_path }
-          _render_partial_with_options options
-        end
       when Jasonette::Base
         merge! key.attributes! 
       when Hash
@@ -192,10 +164,6 @@ module Jasonette
     end
 
     private
-
-    def context_method name, *args, &block
-      context.public_send(name, *args, &block)
-    end
 
     def _extract_hash_values(object, attributes)
       if attributes.blank?
@@ -272,49 +240,6 @@ module Jasonette
 
     def _object_respond_to?(object, *methods)
       methods.all?{ |m| object.respond_to?(m) }
-    end
-
-    def _render_explicit_partial(name_or_options, locals = {})
-      case name_or_options
-        when ::Hash
-          # partial! partial: 'name', foo: 'bar'
-          options = name_or_options
-        else
-          # partial! 'name', locals: {foo: 'bar'}
-          if locals.one? && (locals.keys.first == :locals)
-            options = locals.merge(partial: name_or_options)
-          else
-            options = { partial: name_or_options, locals: locals }
-          end
-          # partial! 'name', foo: 'bar'
-          # TODO : Add feature for option :as and :collection
-          # as = locals.delete(:as)
-          # options[:as] = as if as.present?
-          # options[:collection] = locals[:collection] if locals.key?(:collection)
-      end
-
-      _render_partial_with_options options
-    end
-
-    def _render_partial_with_options(options)
-      options.reverse_merge! locals: {}
-      options.reverse_merge! Jasonette::Base.template_lookup_options
-      _render_partial options
-    end
-
-    def _render_partial(options)
-      options[:locals].merge! _jasonette_handler: self
-      context.render options
-    end
-  end
-
-  module ContexEmbedder
-    def self.extended(klass_obj)
-      context = klass_obj.context
-      context.instance_variables.each do |var|
-        raise "Jason is using #{var} instance variable. Please change variable name." if klass_obj.instance_variable_get(var)
-        klass_obj.instance_variable_set var, context.instance_variable_get(var)
-      end
     end
   end
 end

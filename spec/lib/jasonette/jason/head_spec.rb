@@ -58,13 +58,13 @@ RSpec.describe Jasonette::Jason::Head do
         title "Beatles"
         data.names ["John", "George", "Paul", "Ringo"]
         data.songs [
-            {album: "My Bonnie", song: "My Bonnie"},
-            {album: "My Bonnie", song: "Skinny Minnie"},
-            {album: "Please Please Me", song: "I Saw Her Standing There"},
+            {"album" => "My Bonnie", "song" => "My Bonnie"},
+            {"album" => "My Bonnie", "song" => "Skinny Minnie"},
+            {"album" => "Please Please Me", "song" => "I Saw Her Standing There"},
           ]
       end
 
-      expect(JSON.parse(results.target!)).to eq expected_with_songs
+      expect(results.attributes!).to eq expected_with_songs
     end
   end
 
