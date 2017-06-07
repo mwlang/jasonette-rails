@@ -19,13 +19,8 @@ RSpec.describe Jasonette::Layout do
       end
     end
 
-    expect(results.attributes!).to eq({
-      "components"=>[
-        {"text"=>"Foo", "type"=>"label"},
-        {"text"=>"Bar", "type"=>"label"}
-      ],
+    expect(results).to eqj "components"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}],
       "style" => {"align"=>"right"},
       "action" => {"type"=>"$network.request", "options"=>{"url"=>"https://url/submit", "method"=>"POST"}, "success"=>{"type"=>"$render"}}
-    })
   end
 end

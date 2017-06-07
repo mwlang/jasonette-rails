@@ -95,6 +95,14 @@ module Jasonette
       append item
     end
 
+    def map skip_type=false
+      item = Jasonette::Map.new(context) do
+        type "map" unless skip_type
+        encode(&::Proc.new) if block_given?
+      end
+      append item
+    end
+
     def merge! items
       item = Jasonette::Item.new(context) do
         merge! items
