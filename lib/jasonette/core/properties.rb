@@ -43,8 +43,12 @@ module Jasonette::Properties
     base.send :extend, ClassMethods
   end
 
+  def properties
+    self.class.properties
+  end
+
   def property_names
-    self.class.properties.names
+    properties.names
   end
 
   def property_variables
@@ -52,7 +56,7 @@ module Jasonette::Properties
   end
 
   TYPES.each do |type|
-    define_method("#{type}?") { |name| self.class.properties.has_type?(name, type) }
+    define_method("#{type}?") { |name| properties.has_type?(name, type) }
     define_method("ivar_#{type}_for_property") { |name| "@#{type}_#{name}" }
     define_method("get_#{type}_ivar") do |name|
       instance_variable_get(send("ivar_#{type}_for_property", name)) || (is_many?(name) ? [] : nil)
