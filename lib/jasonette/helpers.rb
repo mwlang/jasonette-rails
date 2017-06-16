@@ -14,7 +14,12 @@ module Jasonette
       if !builder.public_methods.include?(name)
         raise "Method `#{name}` is not defined in Builder"
       end
-      builder.public_send(name, *args, &block)
+      new_builder = builder.public_send(name, *args)
+      if ::Kernel.block_given?
+        j = JasonSingleton.fetch(new_builder.context)
+        j.encode(new_builder, &block)
+      end
+      new_builder
     end
 
     class BlockBuilder
