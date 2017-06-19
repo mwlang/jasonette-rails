@@ -10,6 +10,10 @@ class PostsController < ApplicationController
     render file: "posts/with_template_vars", layout: "jason"
   end
 
+  def last_line
+    render :last_line, layout: "last_line"
+  end
+
   # GET /posts/new
   def new
     @post = Post.new

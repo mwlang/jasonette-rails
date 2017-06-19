@@ -194,4 +194,12 @@ describe PostsController do
       end
     end
   end
+
+  describe "last commented line in layout, partial and template" do
+    it "builds without error" do
+      request.accept = "application/json"
+      get :last_line, format: :json
+      expect(JSON.parse(response.body)).to eq "$jason" => {"head"=>{"foo"=>"bar"}, "body"=>{"class"=>"foo", "style"=>{"color"=>"blue"}}}
+    end
+  end
 end
