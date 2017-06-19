@@ -1,0 +1,5 @@
+head do
+  set! "foo", "bar"
+end
+merge! yield
+# Last line

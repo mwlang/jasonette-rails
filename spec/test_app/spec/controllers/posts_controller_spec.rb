@@ -160,13 +160,21 @@ describe PostsController do
       it "builds block with template methods" do
         request.accept = "application/json"
         get :helper, format: :json, params: { has_block: true }
-        expect(JSON.parse(response.body)["$jason"]["body"]).to include "sections"=>[{"items"=>[{"type"=>"space", "height"=>"10", "foo"=>"bar"}]}]
+        expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include "items"=>[{"type"=>"space", "height"=>"10", "foo"=>"bar"}]
       end
 
       it "builds no need block" do
         request.accept = "application/json"
         get :helper, format: :json, params: { has_block: false }
-        expect(JSON.parse(response.body)["$jason"]["body"]).to include "sections"=>[{"items"=>[{"type"=>"space", "height"=>"10"}]}]
+        expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include "items"=>[{"type"=>"space", "height"=>"10"}]
+      end
+    end
+
+    context "have jason_component" do
+      it "builds block with template methods" do
+        request.accept = "application/json"
+        get :helper, format: :json, params: { has_block: true }
+        expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include"items"=>[{"type"=>"space", "height"=>"40", "foo"=>"bar"}]
       end
     end
   end
@@ -184,6 +192,14 @@ describe PostsController do
         get :as_json, format: :json
         expect(JSON.parse(response.body)["$jason"]).to include "head" => {"as_json"=>[{"actions"=>{"test"=>{"success"=>{"type"=>"$render"}}}}]}
       end
+    end
+  end
+
+  describe "last commented line in layout, partial and template" do
+    it "builds without error" do
+      request.accept = "application/json"
+      get :last_line, format: :json
+      expect(JSON.parse(response.body)).to eq "$jason" => {"head"=>{"foo"=>"bar"}, "body"=>{"class"=>"foo", "style"=>{"color"=>"blue"}}}
     end
   end
 end

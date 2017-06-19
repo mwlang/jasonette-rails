@@ -24,4 +24,10 @@ body do
       merge! space_builder "10", params[:has_block]
     end
   end
+
+  sections do
+    items do
+      merge! space_builder_jason_component "40", "true"
+    end
+  end
 end

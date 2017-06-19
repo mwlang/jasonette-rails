@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       get "without_layout"
       get "with_template_vars"
       get "as_json"
+      get "last_line"
     end
   end
 

@@ -1,0 +1,5 @@
+body do
+  set! "class", "foo"
+  partial! "last_line"
+end
+# Last line
