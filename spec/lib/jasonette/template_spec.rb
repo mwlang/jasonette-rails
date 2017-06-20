@@ -124,7 +124,7 @@ RSpec.describe Jasonette::Template do
   context "#image_url" do
     it "can use actionview asset helpers" do
       build = builder.image_url("foo.png")
-      expect(build).to eq "/images/foo.png"
+      expect(build).to include "http", "/images/foo.png"
     end
   end
 

@@ -4,4 +4,18 @@ body do
       @posts.each{|p| label p.title }
     end
   end
+
+  sections do
+    items do
+      space "20" do
+        action do
+          options do
+            data do
+              email "adam@testmail.com"
+            end
+          end
+        end
+      end
+    end
+  end
 end

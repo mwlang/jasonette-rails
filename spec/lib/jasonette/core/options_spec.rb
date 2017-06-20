@@ -2,41 +2,71 @@ RSpec.describe Jasonette::Options do
 
   let(:builder) { build_with(described_class) }
 
-  it "builds data as a single pair of key/value" do
-    results = builder.encode do
-      data do
-        name "Foo"
+  describe "data" do
+    it "builds as a single pair of key/value" do
+      results = builder.encode do
+        data do
+          name "Foo"
+        end
       end
+      expect(results).to eqj "data" => {"name" => "Foo"}
     end
-    expect(results).to eqj "data" => {"name" => "Foo"}
-  end
 
-  it "builds data as an array" do
-    results = builder.encode do
-      data do
-        name "Foo"
-      end
-      data do
-        name "Bar"
-      end
-    end
-    expect(results).to eqj({
-      "data" => [{"name" => "Foo"}, {"name" => "Bar"}]
-    })
-  end
+    # # Removed :is_many, :is_single type in data property
+    # it "builds data as an array" do
+    #   results = builder.encode do
+    #     data do
+    #       name "Foo"
+    #     end
+    #     data do
+    #       name "Bar"
+    #     end
+    #   end
+    #   expect(results).to eqj({
+    #     "data" => [{"name" => "Foo"}, {"name" => "Bar"}]
+    #   })
+    # end
+    #
+    # it "builds data as a pair of key/value" do
+    #   results = builder.encode do
+    #     data "FooKey" do
+    #       name "Foo"
+    #     end
+    #     data do
+    #       name "Bar"
+    #     end
+    #   end
+    #   expect(results).to eqj({
+    #     "data" => { "FooKey" => {"name" => "Foo"}, "name" => "Bar" }
+    #   })
+    # end
 
-  it "builds data as a pair of key/value" do
-    results = builder.encode do
-      data "FooKey" do
-        name "Foo"
+    describe "authenticity_token" do
+      context "with protect_against_forgery" do
+        it "builds authenticity_token" do
+          allow_any_instance_of(ActionController::Base).to receive(:protect_against_forgery?).and_return(true)
+          allow_any_instance_of(ActionController::Base).to receive(:form_authenticity_token).and_return("AUTH_TOKEN")
+          results = builder.encode do
+            data do
+              name "Foo"
+            end
+          end
+          expect(results).to eqj "data" => {"name"=>"Foo", "authenticity_token"=>"AUTH_TOKEN"}
+        end
       end
-      data do
-        name "Bar"
+
+      context "without protect_against_forgery" do
+        it "not builds authenticity_token" do
+          allow_any_instance_of(ActionController::Base).to receive(:protect_against_forgery?).and_return(false)
+          results = builder.encode do
+            data do
+              name "Foo"
+            end
+          end
+          expect(results).to eqj "data" => {"name" => "Foo"}
+        end
       end
     end
-    expect(results).to eqj({
-      "data" => { "FooKey" => {"name" => "Foo"}, "name" => "Bar" }
-    })
   end
 
   it "builds form as an array" do
