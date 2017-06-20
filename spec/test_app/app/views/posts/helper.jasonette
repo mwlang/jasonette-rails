@@ -27,7 +27,28 @@ body do
 
   sections do
     items do
-      merge! space_builder_jason_component "40", "true"
+      merge! space_builder_component "40", "true"
+    end
+  end
+
+  sections do
+    set! "items" do
+      set! "{{ items }}", (layout do
+        components do
+          label "email"
+        end
+      end)
+    end
+  end
+
+  sections do
+    items do
+      merge! layout_builder
+      layout :horizontal do
+        components do
+          space "20"
+        end
+      end
     end
   end
 end

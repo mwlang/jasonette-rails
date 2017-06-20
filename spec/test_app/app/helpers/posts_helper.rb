@@ -19,9 +19,17 @@ module PostsHelper
     end
   end
 
-  def space_builder_jason_component height, has_block
+  def space_builder_component height, has_block
     if has_block && eval(has_block)
-      jason_component :space, height, &Proc.new { partial! "posts/foo" }
+      component :space, height, &Proc.new { partial! "posts/foo" }
+    end
+  end
+
+  def layout_builder
+    layout do
+      components do
+        space "10"
+      end
     end
   end
 

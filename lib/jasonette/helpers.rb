@@ -9,7 +9,7 @@ module Jasonette
       end
     end
 
-    def jason_component name, *args, &block
+    def component name, *args, &block
       builder = builder(:items, nil)
       if !builder.public_methods.include?(name)
         raise "Method `#{name}` is not defined in Builder"
@@ -20,6 +20,10 @@ module Jasonette
         j.encode(new_builder, &block)
       end
       new_builder
+    end
+
+    def layout *args, &block
+      component(:layout, *args, &block)
     end
 
     class BlockBuilder

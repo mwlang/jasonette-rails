@@ -14,8 +14,8 @@ describe PostsController do
     it "builds @posts" do
       request.accept = "application/json"
       get :index, format: :json
-      expect(JSON.parse(response.body)).to eq({"$jason"=>{"body"=>{
-        "sections"=>[{"items"=>[{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]}]}}})
+      expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include "items"=>
+        [{"text"=>"Foo", "type"=>"label"}, {"text"=>"Bar", "type"=>"label"}]
     end
 
     context "partial!" do
@@ -170,11 +170,27 @@ describe PostsController do
       end
     end
 
-    context "have jason_component" do
+    context "have component" do
       it "builds block with template methods" do
         request.accept = "application/json"
         get :helper, format: :json, params: { has_block: true }
-        expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include"items"=>[{"type"=>"space", "height"=>"40", "foo"=>"bar"}]
+        expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include "items"=>[{"type"=>"space", "height"=>"40", "foo"=>"bar"}]
+      end
+
+      describe "#layout" do
+        it "builds new defined helper and in-built same name base method" do
+          request.accept = "application/json"
+          get :helper, format: :json, params: { has_block: true }
+          expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include "items"=>[{"type"=>"vertical", "components"=>[{"type"=>"space", "height"=>"10"}]},
+            {"type"=>"horizontal", "components"=>[{"type"=>"space", "height"=>"20"}]}]
+        end
+
+        it "builds inline helper" do
+          request.accept = "application/json"
+          get :helper, format: :json, params: { has_block: true }
+          expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include "items"=>
+            {"{{ items }}"=>{"type"=>"vertical", "components"=>[{"text"=>"email", "type"=>"label"}]}}
+        end
       end
     end
   end
@@ -200,6 +216,27 @@ describe PostsController do
       request.accept = "application/json"
       get :last_line, format: :json
       expect(JSON.parse(response.body)).to eq "$jason" => {"head"=>{"foo"=>"bar"}, "body"=>{"class"=>"foo", "style"=>{"color"=>"blue"}}}
+    end
+  end
+
+  describe "action authenticity_token" do
+    context "with protect_against_forgery" do
+      it "builds authenticity_token" do
+        allow_any_instance_of(ActionController::Base).to receive(:protect_against_forgery?).and_return(true)
+        allow_any_instance_of(ActionController::Base).to receive(:form_authenticity_token).and_return("AUTH_TOKEN")
+        get :index, format: :json
+        expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include "items"=>
+          [{"type"=>"space", "height"=>"20", "action"=> {"options"=> {"data"=> {"email"=>"adam@testmail.com", "authenticity_token"=>"AUTH_TOKEN"}}}}]
+      end
+    end
+
+    context "without protect_against_forgery" do
+      it "not builds authenticity_token" do
+        allow_any_instance_of(ActionController::Base).to receive(:protect_against_forgery?).and_return(false)
+        get :index, format: :json
+        expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include "items"=>
+          [{"type"=>"space", "height"=>"20", "action"=> {"options"=> {"data"=> {"email"=>"adam@testmail.com"}}}}]
+      end
     end
   end
 end

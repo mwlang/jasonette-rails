@@ -2,7 +2,9 @@ class TestController < ActionController::Base
 end
 
 def test_view_context_class
-  TestController.view_context_class.new("./spec/fixtures/views")
+  controller = TestController.new
+  controller.request = ActionDispatch::Request.empty
+  controller.view_context
 end
 
 class JsonView
