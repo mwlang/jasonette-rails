@@ -25,7 +25,11 @@ module Jasonette
         if property_names.include? name
           return property_get! name
         else
-          set! name, *args if args.present?
+          if args.present?
+            set! name, *args
+          else
+            raise NoMethodError, "undefined method `#{name}`"
+          end
         end
       end
     end

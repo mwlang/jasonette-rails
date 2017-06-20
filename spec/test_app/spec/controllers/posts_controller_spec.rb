@@ -170,11 +170,27 @@ describe PostsController do
       end
     end
 
-    context "have jason_component" do
+    context "have component" do
       it "builds block with template methods" do
         request.accept = "application/json"
         get :helper, format: :json, params: { has_block: true }
-        expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include"items"=>[{"type"=>"space", "height"=>"40", "foo"=>"bar"}]
+        expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include "items"=>[{"type"=>"space", "height"=>"40", "foo"=>"bar"}]
+      end
+
+      describe "#layout" do
+        it "builds new defined helper and in-built same name base method" do
+          request.accept = "application/json"
+          get :helper, format: :json, params: { has_block: true }
+          expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include "items"=>[{"type"=>"vertical", "components"=>[{"type"=>"space", "height"=>"10"}]},
+            {"type"=>"horizontal", "components"=>[{"type"=>"space", "height"=>"20"}]}]
+        end
+
+        it "builds inline helper" do
+          request.accept = "application/json"
+          get :helper, format: :json, params: { has_block: true }
+          expect(JSON.parse(response.body)["$jason"]["body"]["sections"]).to include "items"=>
+            {"{{ items }}"=>{"type"=>"vertical", "components"=>[{"text"=>"email", "type"=>"label"}]}}
+        end
       end
     end
   end

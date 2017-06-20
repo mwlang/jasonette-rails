@@ -45,7 +45,11 @@ module Jasonette
           _last_builder.public_send name, *args, &block
         else
           begin
-            context_method name, *args, &block
+            if _last_builder.public_methods.include?(name)
+              _last_builder.public_send name, *args, &block
+            else
+              context_method name, *args, &block
+            end
           rescue
             _last_builder.public_send name, *args, &block
           end

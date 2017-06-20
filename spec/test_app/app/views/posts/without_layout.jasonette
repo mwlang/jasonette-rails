@@ -1,4 +1,5 @@
 set! "foo", "in template"
-if new_post_var.present?
+is_new_post_var = new_post_var.present? rescue false
+if is_new_post_var
   template_local_var new_post_var
 end

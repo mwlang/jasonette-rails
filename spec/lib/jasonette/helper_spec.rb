@@ -24,23 +24,35 @@ RSpec.describe Jasonette::Helpers do
     end
   end
 
-  context "#jason_component" do
+  context "#component" do
     it "raise Error" do
       expect {
-        context.jason_component :head do
+        context.component :head do
           template :body
         end
       }.to raise_error "Method `head` is not defined in Builder"
     end
 
     it "builds component" do
-      results =  context.jason_component :textfield, :password, "Password" do
+      results =  context.component :textfield, :password, "Password" do
         action do
           success
         end
       end
 
       expect(results).to eqj "name" => "password", "type" => "textfield", "value" => "Password", "action" => {"success"=>{"type"=>"$render"}}
+    end
+  end
+
+  context "#layout" do
+    it "builds component" do
+      results =  context.layout "horizontal" do
+        components do
+          label "email"
+        end
+      end
+
+      expect(results).to eqj "components" => [{"text"=>"email", "type"=>"label"}], "type" => "horizontal"
     end
   end
 end
