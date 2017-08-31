@@ -16,6 +16,12 @@ RSpec.describe Jasonette::Body::Header do
         placeholder "Type here"
         action do
           trigger "search_for_it"
+          success do
+            reload!
+            options do
+              template :contacts
+            end
+          end
         end
         style do
           background "#555555"
@@ -23,8 +29,9 @@ RSpec.describe Jasonette::Body::Header do
         end
       end
     end
-    expect(results).to eqj("search"=>{"name"=>"Foo", "placeholder"=>"Type here", "action"=>{"trigger"=>"search_for_it"}},
-      "style" => {"background"=>"#555555", "color"=>"#FFFFFF"})
+    expect(results).to eqj("search"=>{"name"=>"Foo", "placeholder"=>"Type here", 
+      "action"=>{"trigger"=>"search_for_it", "success"=>{"type"=>"$reload", "options"=>{"template"=>"contacts"}}},
+      "style" => {"background"=>"#555555", "color"=>"#FFFFFF"}})
   end
 
   it "#menu" do
