@@ -1,5 +1,3 @@
-require 'jasonette/template'
-
 RSpec.describe Jasonette::Template do
   let(:builder) { build_with(described_class) }
 
@@ -74,38 +72,6 @@ RSpec.describe Jasonette::Template do
         end
       end
       expect(JSON.parse(build.target!)).to eq "$jason" => {"head" => {"title" => "Foobar", "foo" => "bar"}}
-    end
-
-    context "readme example" do
-      describe "data blocks" do
-        it "generates expected json" do
-          build = jbuild do
-            head do
-              title "Beatles"
-              data.names ["John", "George", "Paul", "Ringo"]
-              data.songs [
-                { album: "My Bonnie", song: "My Bonnie" },
-                { album: "My Bonnie", song: "Skinny Minnie" },
-                { album: "Please Please Me", song: "I Saw Her Standing There" },
-              ]
-            end
-          end
-          expect(JSON.parse(build.target!)).to match_response_schema("readme_examples/data_blocks")
-        end
-      end
-
-      describe "style blocks using hashes" do
-        it "generates expected json" do
-          build = jbuild do
-            head do
-              title "Foobar"
-              style "styled_row", font: "HelveticaNeue", size: 20, color: "#FFFFFF", padding: 10
-              style "col", font: "RobotoBold", color: "#FF0055"
-            end
-          end
-          expect(JSON.parse(build.target!)).to match_response_schema("readme_examples/style_blocks")
-        end
-      end
     end
   end
 

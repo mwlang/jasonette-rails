@@ -289,6 +289,18 @@ RSpec.describe Jasonette::Items do
       expect(build).to eqj [{"type"=>"map", "style"=>{"type"=>"satellite"}}]
     end
 
+    it "builds html" do
+      build = build_with(described_class) do
+        html "<html>...<html>" do
+          style do
+            type "satellite"
+          end
+        end
+      end
+
+      expect(build).to eqj [{"type"=>"html", "text"=>"<html>...<html>", "style"=>{"type"=>"satellite"}}]
+    end
+
     context "#merge!" do
       it "builds hash" do
         build = build_with(described_class) do

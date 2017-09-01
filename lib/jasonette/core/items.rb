@@ -103,6 +103,15 @@ module Jasonette
       append item
     end
 
+    def html text, skip_type=false
+      item = Jasonette::Item.new(context) do
+        type "html" unless skip_type
+        text text unless text.nil?
+        encode(&::Proc.new) if block_given?
+      end
+      append item
+    end
+
     def merge! items
       item = Jasonette::Item.new(context) do
         merge! items

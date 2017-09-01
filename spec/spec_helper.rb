@@ -5,6 +5,7 @@ require "bundler/setup"
 require 'rails/all'
 
 require 'jasonette'
+require 'jasonette/template'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
