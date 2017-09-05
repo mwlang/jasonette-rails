@@ -143,6 +143,31 @@ RSpec.describe Jasonette::Base do
         expect(build).to eqj [{"builder"=>"1"}, {"builder"=>"2"}, {"no_builder"=>"3"}, 4]
       end
     end
+
+    context "with collection object and argument method" do
+      before do
+        person = Struct.new(:name, :address)
+        @people = [person.new('jon', 'pluto'), person.new('ela', 'moon')]
+      end
+
+      it "handle collection" do
+        people = @people
+        build = builder.encode do
+          array! people, :name
+        end
+        expect(build).to eqj [{"name"=>"jon"}, {"name"=>"ela"}]
+      end
+
+      it "handle collection in block" do
+        people = @people
+        build = builder.encode do
+          array! people do |person|
+            set! :name, person.name
+          end
+        end
+        expect(build).to eqj [{"name"=>"jon"}, {"name"=>"ela"}]
+      end
+    end
   end  
 
   describe "#merge!" do

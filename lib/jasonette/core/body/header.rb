@@ -1,6 +1,7 @@
 module Jasonette
   class Body::Header < Jasonette::Base
     property :style
+    property :search
 
     def menu caption=nil, image_uri=nil
       item = Jasonette::Item.new(context) do

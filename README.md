@@ -4,35 +4,16 @@ flavored JSON in Rails.
 
 ## ALPHA code!
 
-Warning:  Work in progress. Proceed with caution. Testers and contributions are welcome.
-This project is **alpha** code and still in highly experimental stage and subjected to
+Warning:  Work in progress. Proceed with caution. Testers and contributions are welctemperatureroject is **alpha** code and still in highly experimental stage and subjected to
 drastic changes to the DSL.  It is also quite full of bugs despite the unit tests you may find herein!
 
 Note: Almost nothing about this gem is documented, however, you can find ample examples in the project's
 spec/lib/jasonette/... folders.  Generally speaking, the DSL follows the $jason structure closely and supporting
 classes are organized in sub-folders of the project's lib/jasonette/... accordingly.
 
-Since it is hooked into Jbuilder, you're able to mix and match Jbuilder directives alongside the extensions provided
-through this gem.  But it's challenging at the moment to "get it right" so everything stays in hierarchical context.
-
-### Here lies trouble!
-
-* There is limited support for breaking apart giant jbuilder templates into smaller partials.  Right now, there's
-just two "hooks" into the Jbuilder library and that's "json.jason" and "json.body"
-
-* asset_paths don't quite work.  For example, image_url('some_image.png') only yields a relative path and w/o fingerprint.
-
-* not all components are represented, yet.  layouts, labels, images, but not button, textfield, textarea, etc.
-
-* Templates, mixins, etc. are not yet built.
-
-* When you introduce structural errors, the error may be cryptic, basically showing only "failed to load with I/O error reported"
-
 ### TODO
 
-* implement all the Jasonette components
-* implement Templates, Mixins, etc.
-* fix asset Helpers
+* render partial feature for option :as and :collection
 * better error detection and handling
 * refining implementation in the various classes
 * document
@@ -57,96 +38,94 @@ For example:
 Here's how the "hello.json" demo JSON would be rendered with this gem:
 
 ```ruby
-json.jason do
-  head.title "{ ˃̵̑ᴥ˂̵̑}"
-  head.action("$foreground") { reload! }
-  head.action("$pull") { reload! }
-  body do
-    sections do
-      items do
-        image image_url("rails-logo.png") do
-          style do
-            align "center"
-            padding "30"
-          end
+head.title "{ ˃̵̑ᴥ˂̵̑}"
+head.action("$foreground") { reload! }
+head.action("$pull") { reload! }
+body do
+  sections do
+    items do
+      image image_url("rails-logo.png") do
+        style do
+          align "center"
+          padding "30"
         end
-
-        layout :vertical do
-          style do
-            padding "30"
-            spacing "20"
-            align "center"
+      end
+  
+      layout :vertical do
+        style do
+          padding "30"
+          spacing "20"
+          align "center"
+        end
+        components do
+          label "It's ALIVE!" do
+            style do
+              align "center"
+              font "Courier-Bold"
+              size "18"
+            end
           end
-          components do
-            label "It's ALIVE!" do
-              style do
-                align "center"
-                font "Courier-Bold"
-                size "18"
-              end
+    
+          label do
+            text "This is a demo app. You can make your own app by changing the url inside settings.plist"
+            style do
+              align "center"
+              font "Courier"
+              padding "10"
+              size "14"
             end
-
-            label do
-              text "This is a demo app. You can make your own app by changing the url inside settings.plist"
-              style do
-                align "center"
-                font "Courier"
-                padding "10"
-                size "14"
-              end
-            end
-
-            label "{ ˃̵̑ᴥ˂̵̑}" do
-              style do
-                align "center"
-                font "HelveticaNeue-Bold"
-                size "50"
-              end
+          end
+    
+          label "{ ˃̵̑ᴥ˂̵̑}" do
+            style do
+              align "center"
+              font "HelveticaNeue-Bold"
+              size "50"
             end
           end
         end
-
-        label "Check out Live DEMO" do
-          style do
-            align "right"
-            padding "10"
-            color "#000000"
-            font "HelveticaNeue"
-            size "12"
-          end
-
-          href do
-            url "file://demo.json"
-            fresh "true"
-          end
+      end
+  
+      label "Check out Live DEMO" do
+        style do
+          align "right"
+          padding "10"
+          color "#000000"
+          font "HelveticaNeue"
+          size "12"
         end
-
-        label "Watch the tutorial video" do
-          style do
-            align "right"
-            padding "10"
-            color "#000000"
-            font "HelveticaNeue"
-            size "12"
-          end
-          href do
-            url "https://www.youtube.com/watch?v=hfevBAAfCMQ"
-            view "web"
-          end
+    
+        href do
+          url "file://demo.json"
+          fresh "true"
         end
-
-        label "View documentation" do
-          style do
-            align "right"
-            padding "10"
-            color "#000000"
-            font "HelveticaNeue"
-            size "12"
-          end
-          href do
-            url "https://jasonette.github.io/documentation"
-            view "web"
-          end
+      end
+    
+      label "Watch the tutorial video" do
+        style do
+          align "right"
+          padding "10"
+          color "#000000"
+          font "HelveticaNeue"
+          size "12"
+        end
+        href do
+          url "https://www.youtube.com/watch?v=hfevBAAfCMQ"
+          view "web"
+        end
+      end
+    
+      label "View documentation" do
+        style do
+          align "right"
+          padding "10"
+          color "#000000"
+          font "HelveticaNeue"
+          size "12"
+        end
+        href do
+          url "https://jasonette.github.io/documentation"
+          view "web"
         end
       end
     end
@@ -161,16 +140,14 @@ with collections.  Which also makes it a lot easier to build arrays of heterogen
 Building your data is a snap, too.  For example:
 
 ```ruby
-json.jason do
-  head do
-    title "Beatles"
-    data.names ["John", "George", "Paul", "Ringo"]
-    data.songs [
-        {album: "My Bonnie", song: "My Bonnie"},
-        {album: "My Bonnie", song: "Skinny Minnie"},
-        {album: "Please Please Me", song: "I Saw Her Standing There"},
-      ]
-  end
+head do
+  title "Beatles"
+  data.names ["John", "George", "Paul", "Ringo"]
+  data.songs [
+    {album: "My Bonnie", song: "My Bonnie"},
+    {album: "My Bonnie", song: "Skinny Minnie"},
+    {album: "Please Please Me", song: "I Saw Her Standing There"},
+  ]
 end
 ```
 
@@ -179,33 +156,30 @@ Some things get a lot less verbose
 style blocks using hashes:
 
 ```ruby
-json.jason do
-  head do
-    title "Foobar"
-    style "styled_row", font: "HelveticaNeue", size: 20, color: "#FFFFFF", padding: 10
-    style "col", font: "RobotoBold", color: "#FF0055"
-  end
+head do
+  title "Foobar"
+  style "styled_row", font: "HelveticaNeue", size: 20, color: "#FFFFFF", padding: 10
+  style "col", font: "RobotoBold", color: "#FF0055"
 end
 ```
+
 Produces:
 
-```ruby
+```json
 {
   "$jason": {
     "head": {
-      {
-        "title": "Foobar",
-        "styles": {
-          "styled_row": {
-            "font": "HelveticaNeue",
-            "size": "20",
-            "color": "#FFFFFF",
-            "padding": "10",
-          },
-          "col": {
-            "font": "RobotoBold",
-            "color": "#FF0055",
-          }
+      "title": "Foobar",
+      "styles": {
+        "styled_row": {
+          "font": "HelveticaNeue",
+          "size": "20",
+          "color": "#FFFFFF",
+          "padding": "10"
+        },
+        "col": {
+          "font": "RobotoBold",
+          "color": "#FF0055"
         }
       }
     }
@@ -216,15 +190,13 @@ Produces:
 You can even do the bare minimum head block like this:
 
 ```ruby
-json.jason do
+jason do
   head.title "Simple!"
   body do
     # Your Brilliant App
   end
 end
 ```
-
-...more to come!...
 
 ## Installation
 Add this line to your application's Gemfile:
@@ -243,7 +215,222 @@ Or install it yourself as:
 $ gem install jasonette
 ```
 
-Then start using.  Basically, start with "json.jason" to get your opening $jason block and
+## Start using
+
+### Write some Jasonette
+
+`.jasonette` is a extension for any Jasonette templates/partials. 
+
+### Formatting template(jason document)
+
+Basic template looks like this,
+
+```ruby
+# application.jasonette
+head do
+  # ...
+end
+body do
+  # ...
+end
+```
+
+Template(Jasonette) just need `head` and `body` blocks. It results with `$jason`(default document name in jasonette) as root node by default for template.
+Add any other document name. For Example,
+
+```ruby
+# application.jasonette
+# head  block
+# body block 
+jason 'new document' do
+  # ...
+end
+```
+
+Every single word in block assume like method which play as key, and argument as value. 
+And it makes each key pair easy to write.
+
+```ruby
+blue 'its a color'
+# { "blue": "its a color" }
+```
+
+Easily to express any hard method to act as method. Use `set!`.
+
+```ruby
+set! 'color:disabled', '1000'
+# { "color:disabled": '1000' }
+
+set! 'color' do
+  white 'W'
+  black 'B'
+end
+# { "color": [{"white": "W"}, {"black": "B"}] }
+
+set! 'color', [{ encode: 'W', name: 'white' }, { encode: 'B', name: 'black' }] do |color|
+  set! color[:name], color[:encode]
+end
+# { "color": [{"white": "W"}, {"black": "B"}] }
+
+set! 'color', { 'white'=>'W', 'black'=>'B' } do |color_name, encode|
+  set! color_name, encode
+end
+# { "color": [{"white": "W"}, {"black": "B"}] }
+
+set! 'color', [{ encode: 'W', name: 'white', type: 'color' }], :encode, :name
+set! 'color', @colors, :encode, :name
+# { "color": [{"encode": "W", "name": "white"}] }
+```
+
+Some more methods like `set!` which keep things simpler, like `inline`, `array!`, `merge!`
+
+```ruby
+# Add any JSON as inline in template,
+head do
+  title 'players'
+  inline game: 'hockey', field: 'ice' 
+end
+# { "head": { "title": "players", "game": "hockey", "field": "ice" } }
+
+array! ['hockey', { type: 'Game', name: 'Cricket' }, jasonette_obj]
+# ["hockey", {"type": "Game", "name": "Cricket"}, { ... jasonette_obj attributes hash ... }]
+
+array! @players, :id, :name
+array! @players do |player|
+  set! :id, player.id
+  set! :name, player.name
+end
+# [{"id": "1", "name": "bro"}]
+
+merge! jasonette_obj
+merge! game: 'hockey', field: 'ice'
+```
+
+`merge!` also be used to yield your template in layout 
+
+```ruby
+# layouts/application.jasonette
+merge! yield
+```
+
+Break jasonette template in to partials
+
+```ruby
+partial! 'matches', matches: @group.matches
+``` 
+
+Add styles, templates, data, actions in head by calling its relative singular method which clean all element separately.  
+
+```ruby
+head do
+  style :button do
+    # .... 
+  end
+  template :first do
+    # ... 
+  end
+  datum :users do
+    # ...
+  end
+  action :sign_in do
+    # ...
+  end
+end
+# { "head": { 
+#      "styles":    { "button": ... }
+#      "templates": { "first": ... }
+#      "data":      { "users": ... }
+#      "styles":    { "sign_in": ... }
+#   }
+# }
+```
+
+Action can be simplified with `render!`, `reload!`
+
+```ruby
+action do
+  reload!
+end
+# { "action": { "type": "$reload" } }
+```
+
+Different component definitions
+
+```ruby
+label     'colors'
+text      'yellow'
+video     'http://youtube.com/watch?v={{ id }}'
+image     'image_url'
+button    'http://youtube.com/watch?v={{ id }}', true
+button    'click'
+layout    'horizontal' # Default vertical
+textfield 'email', 'email ID' # default nil
+textarea  'bio', 'player' # default nil
+slider    'temperature', 10 # default nil
+space     20
+html      '<html></html>'
+map # block...
+```
+
+This all component definitions also accepts block. And in result, It will add `type` by default,
+ 
+```ruby
+label 'Hello' do
+  style do
+    color '#fff'
+  end
+end
+# { "type": "label", "text": "Hello", "style": { "color": "#fff" } }
+```
+
+### Rails helpers
+
+Helpers will return a jasonette object. Which further can be used with core method like `set!`, `array!`, `merge!`
+
+```ruby
+label = component 'label', 'hello' do
+  # ...
+end
+
+layout = layout 'horizontal' do
+  # ...
+end
+
+set! "items", [label, layout]
+```
+
+You can also create some custom helpers using `jason_builder`. 
+Argument be like any builder or builder class. Like :map, Jasonette::Body::Sections.
+More you get following `lib/jasonette/core` folders
+
+```ruby
+jason_builder :style do
+  # ...
+end
+```
+
+### Some conventions to make things simpler.
+
+* use `set!` when keys to be like reserve keywork in rails. 
+* use `klass` to set `class` key 
+* use `action_method` to set `method` key
+
+```ruby
+set! 'yield', 'strength'
+# { "yield": "strength" }
+
+klass 'disable'
+# { "class": "disable" }
+
+action do
+  options do
+    url 'login'
+    action_method 'post'
+  end
+end
+# { "action": { "options": { "url": "login", "method": "post" } } }
+```
+
 ## Contributing
 
 # How to contribute to Jasonette Rails

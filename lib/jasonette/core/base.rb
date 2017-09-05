@@ -2,38 +2,6 @@ module Jasonette
   class Base
     include Properties
 
-    def implicit_set! name, *args, &block
-      if property_names.include? name
-        with_attributes { property_set! name, *args, &block }
-      else
-        set!(name) { encode(&block) }
-      end
-    end
-
-    def attr_value name
-      if property_names.include? name
-        instance_variable_get :"@#{name}"
-      else
-        @attributes[name.to_s]
-      end
-    end
-
-    def method_missing name, *args, &block
-      if ::Kernel.block_given?
-        implicit_set! name, *args, &block
-      else
-        if property_names.include? name
-          return property_get! name
-        else
-          if args.present?
-            set! name, *args
-          else
-            raise NoMethodError, "undefined method `#{name}`"
-          end
-        end
-      end
-    end
-
     attr_reader :context
     attr_reader :attributes
 
@@ -168,6 +136,38 @@ module Jasonette
     end
 
     private
+
+    def implicit_set! name, *args, &block
+      if property_names.include? name
+        with_attributes { property_set! name, *args, &block }
+      else
+        set!(name) { encode(&block) }
+      end
+    end
+
+    def attr_value name
+      if property_names.include? name
+        instance_variable_get :"@#{name}"
+      else
+        @attributes[name.to_s]
+      end
+    end
+
+    def method_missing name, *args, &block
+      if ::Kernel.block_given?
+        implicit_set! name, *args, &block
+      else
+        if property_names.include? name
+          return property_get! name
+        else
+          if args.present?
+            set! name, *args
+          else
+            raise NoMethodError, "undefined method `#{name}`"
+          end
+        end
+      end
+    end
 
     def _extract_hash_values(object, attributes)
       if attributes.blank?

@@ -18,10 +18,12 @@
                 "names": { "type": "array" },
                 "songs": {
                   "type": "array",
-                  "required": ["album", "song"],
-                  "properties": {
-                    "album": { "type": "string" },
-                    "song": { "type": "string" }
+                  "items": {
+                    "required": ["album", "song"],
+                    "properties": {
+                      "album": { "type": "string" },
+                      "song": { "type": "string" }
+                    }
                   }
                 }
               }
